@@ -33,6 +33,15 @@
       ],
       "versions": [
         {
+          "version": "0.3.2",
+          "buildVersion": "24",
+          "date": "2026-11-17",
+          "localizedDescription": "• Loads all your items, not only the first 1,000\n• Downloads retry when iOS can't create the file\n• Search by hash, and ignoring accents\n• New items sort correctly at the top",
+          "downloadURL": "https://github.com/maniac75/t-box-for-torbox/releases/download/v0.3.2/T-Box-0.3.2.ipa",
+          "size": 966165,
+          "minOSVersion": "17.0"
+        },
+        {
           "version": "0.3.1",
           "buildVersion": "22",
           "date": "2026-11-16",
@@ -57,11 +66,11 @@
           "NSPhotoLibraryAddUsageDescription": "To save images and videos you download from TorBox to Photos."
         }
       },
-      "version": "0.3.1",
-      "versionDate": "2026-11-16",
-      "versionDescription": "• Favorites: star items to keep them at the top\n• Search bar always visible\n• Privacy policy link in Account\n• Status label no longer splits in two lines",
-      "downloadURL": "https://github.com/maniac75/t-box-for-torbox/releases/download/v0.3.1/T-Box-0.3.1.ipa",
-      "size": 952817
+      "version": "0.3.2",
+      "versionDate": "2026-11-17",
+      "versionDescription": "• Loads all your items, not only the first 1,000\n• Downloads retry when iOS can't create the file\n• Search by hash, and ignoring accents\n• New items sort correctly at the top",
+      "downloadURL": "https://github.com/maniac75/t-box-for-torbox/releases/download/v0.3.2/T-Box-0.3.2.ipa",
+      "size": 966165
     }
   ],
   "news": []
