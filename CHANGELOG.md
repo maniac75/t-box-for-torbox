@@ -2,6 +2,18 @@
 
 Format: [Keep a Changelog](https://keepachangelog.com/en/1.1.0/). Versions before 0.3.0 are pre-releases.
 
+## [0.3.2] - unreleased
+
+### Added
+- Search by hash.
+
+### Fixed
+- Large libraries: all torrents and web downloads load, not only the first 1,000.
+- Downloads to iPhone retry automatically when iOS can't create the file (some sideloaded setups).
+- Search ignores accents ("pokemon" finds "Pokémon").
+- New items sort correctly at the top.
+- More detail in diagnostics for download errors.
+
 ## [0.3.1] - 2026-11-16
 
 ### Added
@@ -71,6 +83,7 @@ Format: [Keep a Changelog](https://keepachangelog.com/en/1.1.0/). Versions befor
 ### Added
 - First version: sign in, torrent and web lists, add magnets and .torrent files, play videos or open in Infuse/VLC, background downloads to Files and Photos. English and Spanish.
 
+[0.3.2]: https://github.com/maniac75/t-box-for-torbox/releases/tag/v0.3.2
 [0.3.1]: https://github.com/maniac75/t-box-for-torbox/releases/tag/v0.3.1
 [0.3.0]: https://github.com/maniac75/t-box-for-torbox/releases/tag/v0.3.0
 [0.2.3]: https://github.com/maniac75/t-box-for-torbox/releases/tag/v0.2.3

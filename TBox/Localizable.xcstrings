@@ -441,6 +441,16 @@
         }
       }
     },
+    "Buscar por nombre o hash": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Search by name or hash"
+          }
+        }
+      }
+    },
     "Buscar sitio": {
       "localizations": {
         "en": {

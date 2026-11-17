@@ -22,7 +22,7 @@ final class DownloadManager: NSObject, ObservableObject, URLSessionDownloadDeleg
     }
 
     struct Item: Identifiable {
-        let id: Int
+        var id: Int
         let name: String
         var progress: Double
         var received: Int64
@@ -44,6 +44,30 @@ final class DownloadManager: NSObject, ObservableObject, URLSessionDownloadDeleg
         c.allowsCellularAccess = true
         return URLSession(configuration: c, delegate: self, delegateQueue: nil)
     }()
+
+    /// Plan B: sesión normal (no de fondo). Algunas instalaciones por sideload no dejan que el servicio
+    /// de descargas de iOS cree archivos ("Cannot create file"); ahí se reintenta por esta vía.
+    private lazy var foregroundSession: URLSession = {
+        let c = URLSessionConfiguration.default
+        c.allowsCellularAccess = true
+        c.timeoutIntervalForResource = 60 * 60 * 24
+        return URLSession(configuration: c, delegate: self, delegateQueue: nil)
+    }()
+
+    /// Los ids de la sesión normal se desplazan para no chocar con los de la sesión de fondo.
+    private static let foregroundOffset = 1_000_000
+    private func itemID(_ session: URLSession, _ task: URLSessionTask) -> Int {
+        session === foregroundSession ? task.taskIdentifier + Self.foregroundOffset : task.taskIdentifier
+    }
+
+    /// Si la sesión de fondo ya falló así una vez, las siguientes descargas van directo por la normal.
+    private static var useForeground: Bool {
+        get { UserDefaults.standard.bool(forKey: "downloads.useForeground") }
+        set { UserDefaults.standard.set(newValue, forKey: "downloads.useForeground") }
+    }
+
+    private static let fallbackCodes: Set<Int> = [NSURLErrorCannotCreateFile, NSURLErrorCannotOpenFile,
+                                                  NSURLErrorCannotWriteToFile, NSURLErrorCannotMoveFile]
 
     static var downloadsDir: URL {
         let docs = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask)[0]
@@ -68,9 +92,10 @@ final class DownloadManager: NSObject, ObservableObject, URLSessionDownloadDeleg
     }
 
     func start(url: URL, filename: String, saveToPhotos: Bool = false) {
-        let task = session.downloadTask(with: url)
+        let s = Self.useForeground ? foregroundSession : session
+        let task = s.downloadTask(with: url)
         task.taskDescription = (saveToPhotos ? Self.photosPrefix : "") + filename
-        let item = Item(id: task.taskIdentifier, name: filename, progress: 0, received: 0, expected: 0,
+        let item = Item(id: itemID(s, task), name: filename, progress: 0, received: 0, expected: 0,
                         status: .running, toPhotos: saveToPhotos, task: task)
         DispatchQueue.main.async { self.items.insert(item, at: 0) }
         task.resume()
@@ -166,7 +191,7 @@ final class DownloadManager: NSObject, ObservableObject, URLSessionDownloadDeleg
 
     func urlSession(_ session: URLSession, downloadTask: URLSessionDownloadTask, didWriteData bytesWritten: Int64,
                     totalBytesWritten: Int64, totalBytesExpectedToWrite: Int64) {
-        update(downloadTask.taskIdentifier) { item in
+        update(itemID(session, downloadTask)) { item in
             item.received = totalBytesWritten
             item.expected = totalBytesExpectedToWrite
             item.progress = totalBytesExpectedToWrite > 0 ? Double(totalBytesWritten) / Double(totalBytesExpectedToWrite) : 0
@@ -178,15 +203,16 @@ final class DownloadManager: NSObject, ObservableObject, URLSessionDownloadDeleg
         let status = (downloadTask.response as? HTTPURLResponse)?.statusCode ?? 200
         guard (200..<300).contains(status) else {
             Diagnostics.log("DOWNLOAD HTTP \(status) \(downloadTask.taskDescription ?? "")")
-            update(downloadTask.taskIdentifier) { $0.status = .failed("HTTP \(status)") }
+            update(itemID(session, downloadTask)) { $0.status = .failed("HTTP \(status)") }
             return
         }
         let info = Self.parse(downloadTask.taskDescription ?? downloadTask.response?.suggestedFilename)
         let dest = Self.uniqueDestination(for: info.name)
-        let id = downloadTask.taskIdentifier
+        let id = itemID(session, downloadTask)
         do {
             try FileManager.default.moveItem(at: location, to: dest)
         } catch {
+            Diagnostics.log("DOWNLOAD move failed \(info.name): \(Self.describe(error))")
             update(id) { $0.status = .failed(error.localizedDescription) }
             return
         }
@@ -279,9 +305,48 @@ final class DownloadManager: NSObject, ObservableObject, URLSessionDownloadDeleg
 
     func urlSession(_ session: URLSession, task: URLSessionTask, didCompleteWithError error: Error?) {
         guard let error else { return }
-        if (error as NSError).code == NSURLErrorCancelled { return }
-        Diagnostics.log("DOWNLOAD error \(task.taskDescription ?? ""): \(error.localizedDescription)")
-        update(task.taskIdentifier) { $0.status = .failed(error.localizedDescription) }
+        let ns = error as NSError
+        if ns.code == NSURLErrorCancelled { return }
+        let old = itemID(session, task)
+        Diagnostics.log("DOWNLOAD error \(task.taskDescription ?? "") [\(session === foregroundSession ? "normal" : "background")]: \(Self.describe(error))")
+        // Plan B: si iOS no pudo crear el archivo en la sesión de fondo, se repite como descarga normal.
+        if session !== foregroundSession, ns.domain == NSURLErrorDomain, Self.fallbackCodes.contains(ns.code),
+           let url = task.originalRequest?.url {
+            Self.useForeground = true
+            Diagnostics.log("DOWNLOAD retrying as normal download")
+            let retry = foregroundSession.downloadTask(with: url)
+            retry.taskDescription = task.taskDescription
+            let newID = itemID(foregroundSession, retry)
+            DispatchQueue.main.async {
+                if let i = self.items.firstIndex(where: { $0.id == old }) {
+                    self.items[i].id = newID
+                    self.items[i].task = retry
+                    self.items[i].status = .running
+                    self.items[i].progress = 0
+                }
+                retry.resume()
+            }
+            return
+        }
+        update(old) { $0.status = .failed(error.localizedDescription) }
+    }
+
+    /// Todo el detalle de un error, para el diagnóstico: dominio, código, ruta y error interno.
+    static func describe(_ error: Error) -> String {
+        let ns = error as NSError
+        var parts = ["\(ns.localizedDescription) (\(ns.domain) \(ns.code))"]
+        if let p = ns.userInfo[NSFilePathErrorKey] { parts.append("path=\(p)") }
+        // Solo el dominio del enlace: la URL completa puede llevar tokens.
+        if let u = ns.userInfo[NSURLErrorFailingURLErrorKey] as? URL, let host = u.host { parts.append("host=\(host)") }
+        var inner = ns.userInfo[NSUnderlyingErrorKey] as? NSError
+        var depth = 0
+        while let e = inner, depth < 3 {
+            parts.append("underlying: \(e.localizedDescription) (\(e.domain) \(e.code))")
+            if let p = e.userInfo[NSFilePathErrorKey] { parts.append("path=\(p)") }
+            inner = e.userInfo[NSUnderlyingErrorKey] as? NSError
+            depth += 1
+        }
+        return parts.joined(separator: " | ")
     }
 
     func urlSessionDidFinishEvents(forBackgroundURLSession session: URLSession) {

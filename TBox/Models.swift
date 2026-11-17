@@ -262,14 +262,7 @@ struct Torrent: Decodable, Identifiable, Hashable {
 
     var isReady: Bool { downloadPresent || downloadFinished }
 
-    var createdDate: Date? {
-        guard let s = createdAt else { return nil }
-        let f = ISO8601DateFormatter()
-        f.formatOptions = [.withInternetDateTime, .withFractionalSeconds]
-        if let d = f.date(from: s) { return d }
-        f.formatOptions = [.withInternetDateTime]
-        return f.date(from: s)
-    }
+    var createdDate: Date? { createdAt.flatMap(TorBoxDate.parse) }
 
     var sortedFiles: [TorrentFile] {
         files.sorted { $0.displayName.localizedStandardCompare($1.displayName) == .orderedAscending }
@@ -539,5 +532,36 @@ struct ReadyTracker {
         }
         defaults.set(pending, forKey: key)
         return ready
+    }
+}
+
+/// Fechas de TorBox en cualquiera de sus formatos: con o sin decimales (de cualquier largo),
+/// con "Z", "+00:00" o sin zona (se asume UTC), con "T" o espacio, o como número Unix.
+enum TorBoxDate {
+    private static let iso: ISO8601DateFormatter = {
+        let f = ISO8601DateFormatter()
+        f.formatOptions = [.withInternetDateTime]
+        return f
+    }()
+    private static var cache: [String: Date] = [:]
+    private static let lock = NSLock()
+
+    static func parse(_ raw: String) -> Date? {
+        lock.lock(); defer { lock.unlock() }
+        if let d = cache[raw] { return d }
+        let d = compute(raw)
+        if let d { cache[raw] = d }
+        return d
+    }
+
+    private static func compute(_ raw: String) -> Date? {
+        let s = raw.trimmingCharacters(in: .whitespaces)
+        if let n = Double(s) { return Date(timeIntervalSince1970: n > 1e12 ? n / 1000 : n) }
+        var t = s.replacingOccurrences(of: " ", with: "T")
+        // Quitar los decimales de los segundos, tengan los dígitos que tengan.
+        if let r = t.range(of: #"\.\d+"#, options: .regularExpression) { t.removeSubrange(r) }
+        // Sin zona horaria: se asume UTC.
+        if t.range(of: #"(Z|[+-]\d{2}:?\d{2})$"#, options: .regularExpression) == nil { t += "Z" }
+        return iso.date(from: t)
     }
 }

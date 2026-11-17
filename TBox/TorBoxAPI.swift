@@ -127,12 +127,26 @@ final class TorBoxAPI: @unchecked Sendable {
 
     // MARK: Torrents
 
+    /// TorBox entrega como máximo 1.000 por consulta: se piden páginas hasta traer todo.
     func items(_ kind: ItemKind) async throws -> [Torrent] {
-        let req = try makeRequest(kind.listPath, query: [URLQueryItem(name: "bypass_cache", value: "true")])
-        let data = try await send(req)
-        var list = try unwrap([Torrent].self, from: data) ?? []
-        for i in list.indices { list[i].kind = kind }
-        return list
+        let pageSize = 1000
+        var all: [Torrent] = []
+        var seen = Set<Int>()
+        for page in 0..<20 {   // tope de seguridad: 20.000 elementos
+            let req = try makeRequest(kind.listPath, query: [
+                URLQueryItem(name: "bypass_cache", value: "true"),
+                URLQueryItem(name: "offset", value: String(page * pageSize)),
+                URLQueryItem(name: "limit", value: String(pageSize))
+            ])
+            let data = try await send(req)
+            let list = try unwrap([Torrent].self, from: data) ?? []
+            for var t in list where seen.insert(t.id).inserted {
+                t.kind = kind
+                all.append(t)
+            }
+            if list.count < pageSize { break }
+        }
+        return all
     }
 
     func addMagnet(_ magnet: String, onlyIfCached: Bool) async throws -> CreateResult {

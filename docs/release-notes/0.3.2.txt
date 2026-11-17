@@ -1,0 +1,4 @@
+• Loads all your items, not only the first 1,000
+• Downloads retry when iOS can't create the file
+• Search by hash, and ignoring accents
+• New items sort correctly at the top

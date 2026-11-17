@@ -182,4 +182,14 @@ final class DecodingTests: XCTestCase {
         XCTAssertEqual(AppConfig.referralURL.absoluteString,
                        "https://torbox.app/subscription?referral=7b4a584a-00a5-430e-aa31-809aa4934cb0")
     }
+
+    func testTorBoxDateFormats() {
+        let ref = Date(timeIntervalSince1970: 1_794_783_762)   // 2026-11-15T23:02:42Z
+        for s in ["2026-11-15T23:02:42Z", "2026-11-15T23:02:42.123Z", "2026-11-15T23:02:42.123456Z",
+                  "2026-11-15T23:02:42+00:00", "2026-11-15T23:02:42.5+00:00", "2026-11-15 23:02:42",
+                  "2026-11-15T23:02:42", "1794783762"] {
+            XCTAssertEqual(TorBoxDate.parse(s), ref, s)
+        }
+        XCTAssertNil(TorBoxDate.parse("not a date"))
+    }
 }

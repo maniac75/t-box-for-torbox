@@ -20,7 +20,17 @@ struct TorrentListView: View {
         case .active: byFilter = !t.isReady
         case .ready: byFilter = t.isReady
         }
-        return byFilter && (search.isEmpty || t.name.localizedCaseInsensitiveContains(search))
+        return byFilter && Self.matchesSearch(t, search)
+    }
+
+    /// Busca por nombre (sin distinguir mayúsculas ni acentos) o por hash.
+    static func matchesSearch(_ t: Torrent, _ query: String) -> Bool {
+        let q = query.trimmingCharacters(in: .whitespacesAndNewlines)
+        if q.isEmpty { return true }
+        let opts: String.CompareOptions = [.caseInsensitive, .diacriticInsensitive, .widthInsensitive]
+        if t.name.range(of: q, options: opts) != nil { return true }
+        if let h = t.hash, h.range(of: q, options: .caseInsensitive) != nil { return true }
+        return false
     }
 
     private var visible: [Torrent] {
@@ -111,7 +121,7 @@ struct TorrentListView: View {
             }
             .navigationTitle(kind.title)
             .navigationDestination(for: ItemRef.self) { ref in TorrentDetailView(ref: ref) }
-            .searchable(text: $search, placement: .navigationBarDrawer(displayMode: .always), prompt: "Buscar")
+            .searchable(text: $search, placement: .navigationBarDrawer(displayMode: .always), prompt: "Buscar por nombre o hash")
             .refreshable { await state.refresh() }
             .toolbar {
                 ToolbarItem(placement: .topBarTrailing) {
