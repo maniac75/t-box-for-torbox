@@ -131,6 +131,16 @@
         }
       }
     },
+    "Abrir en VidHub": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Open in VidHub"
+          }
+        }
+      }
+    },
     "Abrir en ntfy.sh": {
       "localizations": {
         "en": {

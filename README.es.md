@@ -51,7 +51,7 @@ TorBox es un servicio en la nube que descarga torrents, archivos de sitios como 
 - **AirLock** (planes pagados): evita que TorBox borre ítems en su limpieza de 30 días sin uso, con un 🔒 en los protegidos.
 
 ### Archivos
-- **Reproducir** MP4/MOV con Picture in Picture y AirPlay. **Abrir en Infuse o VLC** para MKV y otros formatos.
+- **Reproducir** MP4/MOV con Picture in Picture y AirPlay. **Abrir en Infuse, VLC o VidHub** para MKV y otros formatos.
 - **Ver** PDF, imágenes, documentos y audio sin guardarlos.
 - **Descargar al iPhone** en segundo plano, aunque cierres la app, a **Archivos › En mi iPhone › T-Box**.
 - **Guardar fotos y videos directo en Fotos**, por ejemplo de Instagram o X.
@@ -140,7 +140,7 @@ Todos los detalles en la **[Política de privacidad](PRIVACY.es.md)**.
 ## Preguntas frecuentes
 
 **¿Por qué no se reproduce un MKV dentro de la app?**
-El reproductor de iOS no abre MKV. Usa **Abrir en Infuse** o **Abrir en VLC**. Un reproductor propio para MKV está en la hoja de ruta.
+El reproductor de iOS no abre MKV. Usa **Abrir en Infuse**, **Abrir en VLC** o **Abrir en VidHub** con el reproductor correspondiente instalado. Un reproductor propio para MKV está en la hoja de ruta.
 
 **¿Dónde quedan mis descargas?**
 En la app Archivos › En mi iPhone › T-Box. Para llevar un archivo a iCloud u otra carpeta, deslízalo en "En el iPhone" › Guardar en… › Guardar en Archivos.

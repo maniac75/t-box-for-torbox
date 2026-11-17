@@ -56,7 +56,7 @@ TorBox is a cloud service that downloads torrents, files from hosts like Mega or
 - **AirLock** (paid plans): keep items out of TorBox's 30-day inactivity cleanup, with a 🔒 on protected items.
 
 ### Files
-- **Play** MP4/MOV with Picture in Picture and AirPlay. **Open in Infuse or VLC** for MKV and other formats.
+- **Play** MP4/MOV with Picture in Picture and AirPlay. **Open in Infuse, VLC or VidHub** for MKV and other formats.
 - **Preview** PDFs, images, documents and audio without saving them.
 - **Download to iPhone** in the background, even if you close the app, to **Files › On My iPhone › T-Box**.
 - **Save photos and videos straight to Photos**, e.g. from Instagram or X.
@@ -145,7 +145,7 @@ Full details in the **[Privacy Policy](PRIVACY.md)**.
 ## FAQ
 
 **Why won't an MKV play inside the app?**
-The iOS player doesn't open MKV. Use **Open in Infuse** or **Open in VLC**. A built-in MKV player is on the roadmap.
+The iOS player doesn't open MKV. Use **Open in Infuse**, **Open in VLC** or **Open in VidHub** with the corresponding player installed. A built-in MKV player is on the roadmap.
 
 **Where are my downloads?**
 In the Files app › On My iPhone › T-Box. To move a file to iCloud or another folder, swipe it in "On iPhone" › Save to… › Save to Files.

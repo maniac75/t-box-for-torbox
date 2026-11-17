@@ -114,6 +114,7 @@
 	<array>
 		<string>infuse</string>
 		<string>vlc-x-callback</string>
+		<string>open-vidhub</string>
 	</array>
 </dict>
 </plist>

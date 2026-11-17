@@ -183,6 +183,7 @@ struct TorrentDetailView: View {
         if f.isVideo || f.isNativelyPlayable {
             Button("Abrir en Infuse") { run(t, f) { url in openExternal("infuse://x-callback-url/play?url=", url) } }
             Button("Abrir en VLC") { run(t, f) { url in openExternal("vlc-x-callback://x-callback-url/stream?url=", url) } }
+            Button("Abrir en VidHub") { run(t, f) { url in openExternal("open-vidhub://x-callback-url/play?url=", url, filename: f.displayName) } }
         }
         if f.canSaveToPhotos {
             Button("Guardar en Fotos") {
@@ -244,11 +245,16 @@ struct TorrentDetailView: View {
         } catch { flash(error.localizedDescription) }
     }
 
-    private func openExternal(_ prefix: String, _ url: URL) {
+    private func openExternal(_ prefix: String, _ url: URL, filename: String? = nil) {
         var allowed = CharacterSet.alphanumerics
         allowed.insert(charactersIn: "-._~")
-        guard let encoded = url.absoluteString.addingPercentEncoding(withAllowedCharacters: allowed),
-              let target = URL(string: prefix + encoded) else { return }
+        guard let encoded = url.absoluteString.addingPercentEncoding(withAllowedCharacters: allowed) else { return }
+        var link = prefix + encoded
+        if let filename {
+            guard let encodedName = filename.addingPercentEncoding(withAllowedCharacters: allowed) else { return }
+            link += "&filename=" + encodedName
+        }
+        guard let target = URL(string: link) else { return }
         openURL(target) { accepted in
             if !accepted { flash(L("Esa app no está instalada")) }
         }
