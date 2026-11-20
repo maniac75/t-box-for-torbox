@@ -192,4 +192,12 @@ final class DecodingTests: XCTestCase {
         }
         XCTAssertNil(TorBoxDate.parse("not a date"))
     }
+
+    func testVersionCompare() {
+        XCTAssertTrue(UpdateChecker.isNewer("0.3.3", than: "0.3.2"))
+        XCTAssertTrue(UpdateChecker.isNewer("0.3.10", than: "0.3.9"))
+        XCTAssertTrue(UpdateChecker.isNewer("1.0", than: "0.9.9"))
+        XCTAssertFalse(UpdateChecker.isNewer("0.3.2", than: "0.3.2"))
+        XCTAssertFalse(UpdateChecker.isNewer("0.3.1", than: "0.3.2"))
+    }
 }

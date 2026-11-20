@@ -31,10 +31,13 @@ final class DownloadManager: NSObject, ObservableObject, URLSessionDownloadDeleg
         var toPhotos: Bool = false
         var savedTo: String?
         var task: URLSessionDownloadTask?
+        var url: URL?
     }
 
     @Published var items: [Item] = []
     @Published var localFiles: [URL] = []
+    /// true si esta instalación descarga por la vía normal (plan B): la app debe quedar abierta.
+    @Published private(set) var usesForegroundDownloads = UserDefaults.standard.bool(forKey: "downloads.useForeground")
     var backgroundCompletion: (() -> Void)?
 
     private lazy var session: URLSession = {
@@ -63,7 +66,10 @@ final class DownloadManager: NSObject, ObservableObject, URLSessionDownloadDeleg
     /// Si la sesión de fondo ya falló así una vez, las siguientes descargas van directo por la normal.
     private static var useForeground: Bool {
         get { UserDefaults.standard.bool(forKey: "downloads.useForeground") }
-        set { UserDefaults.standard.set(newValue, forKey: "downloads.useForeground") }
+        set {
+            UserDefaults.standard.set(newValue, forKey: "downloads.useForeground")
+            DispatchQueue.main.async { DownloadManager.shared.usesForegroundDownloads = newValue }
+        }
     }
 
     private static let fallbackCodes: Set<Int> = [NSURLErrorCannotCreateFile, NSURLErrorCannotOpenFile,
@@ -85,7 +91,8 @@ final class DownloadManager: NSObject, ObservableObject, URLSessionDownloadDeleg
                 guard let dt = t as? URLSessionDownloadTask, t.state == .running || t.state == .suspended else { return nil }
                 let info = Self.parse(dt.taskDescription)
                 return Item(id: dt.taskIdentifier, name: info.name, progress: 0,
-                            received: 0, expected: 0, status: .running, toPhotos: info.toPhotos, task: dt)
+                            received: 0, expected: 0, status: .running, toPhotos: info.toPhotos, task: dt,
+                            url: dt.originalRequest?.url)
             }
             DispatchQueue.main.async { self?.items = restored }
         }
@@ -96,9 +103,22 @@ final class DownloadManager: NSObject, ObservableObject, URLSessionDownloadDeleg
         let task = s.downloadTask(with: url)
         task.taskDescription = (saveToPhotos ? Self.photosPrefix : "") + filename
         let item = Item(id: itemID(s, task), name: filename, progress: 0, received: 0, expected: 0,
-                        status: .running, toPhotos: saveToPhotos, task: task)
+                        status: .running, toPhotos: saveToPhotos, task: task, url: url)
         DispatchQueue.main.async { self.items.insert(item, at: 0) }
         task.resume()
+    }
+
+    /// Vuelve a intentar una descarga fallida con el mismo enlace.
+    func retry(_ item: Item) {
+        guard let url = item.url ?? item.task?.originalRequest?.url else { return }
+        items.removeAll { $0.id == item.id }
+        Diagnostics.log("DOWNLOAD retry \(item.name)")
+        start(url: url, filename: item.name, saveToPhotos: item.toPhotos)
+    }
+
+    func canRetry(_ item: Item) -> Bool {
+        if case .failed = item.status { return (item.url ?? item.task?.originalRequest?.url) != nil }
+        return false
     }
 
     func cancel(_ item: Item) {

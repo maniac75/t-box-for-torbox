@@ -16,6 +16,16 @@ struct DownloadsView: View {
                     Section {
                         ForEach(downloads.items) { item in
                             DownloadStatusRow(item: item)
+                                .contentShape(Rectangle())
+                                .onTapGesture { if downloads.canRetry(item) { downloads.retry(item) } }
+                                .swipeActions(edge: .leading) {
+                                    if downloads.canRetry(item) {
+                                        Button { downloads.retry(item) } label: {
+                                            Label("Reintentar", systemImage: "arrow.clockwise")
+                                        }
+                                        .tint(.blue)
+                                    }
+                                }
                                 .swipeActions {
                                     if item.status == .running {
                                         Button(role: .destructive) { downloads.cancel(item) } label: {
@@ -29,6 +39,17 @@ struct DownloadsView: View {
                             Text("Descargas")
                             Spacer()
                             Button("Limpiar") { downloads.clearFinished() }.font(.caption)
+                        }
+                    } footer: {
+                        VStack(alignment: .leading, spacing: 6) {
+                            if downloads.items.contains(where: { downloads.canRetry($0) }) {
+                                Text("Toca una descarga fallida para reintentarla.")
+                            }
+                            if downloads.usesForegroundDownloads {
+                                Label("En tu instalación, iOS no permite descargas en segundo plano. Mantén T-Box abierta mientras descarga y no la cierres desde el selector de apps.",
+                                      systemImage: "exclamationmark.triangle")
+                                    .foregroundStyle(.orange)
+                            }
                         }
                     }
                 }

@@ -45,6 +45,7 @@ struct RootView: View {
     @Environment(\.scenePhase) private var scenePhase
     @AppStorage("support.completed") private var completedDownloads = 0
     @AppStorage("support.asked") private var supportAsked = false
+    @ObservedObject private var updates = UpdateChecker.shared
 
     var body: some View {
         Group {
@@ -61,7 +62,9 @@ struct RootView: View {
                         .tabItem { Label("En el iPhone", systemImage: "arrow.down.circle") }
                     SettingsView()
                         .tabItem { Label("Cuenta", systemImage: "person.crop.circle") }
+                        .badge(updates.updateAvailable ? 1 : 0)
                 }
+                .task { await updates.check() }
                 .sheet(isPresented: $state.showAdd) {
                     AddView(initialText: state.incomingText, initialFile: state.incomingTorrentFile)
                 }

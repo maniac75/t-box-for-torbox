@@ -22,6 +22,7 @@ T-Box **no** recopila ni guarda contraseñas, datos de pago, contactos, ubicaci�
 - **TorBox** recibe cada llamada a la API, como con cualquier cliente de TorBox. Ver la [política de privacidad de TorBox](https://torbox.app/privacy).
 - **ntfy.sh** (opcional, desactivado por defecto): si activas *Avisos instantáneos con ntfy*, T-Box configura el webhook de tu cuenta de TorBox hacia un tema aleatorio de ntfy. Desde ahí TorBox envía los avisos (incluidos los nombres de los ítems) a `ntfy.sh`. Lo puedes desactivar cuando quieras en Cuenta.
 - **Infuse, VLC y otras apps:** solo si eliges *Abrir en…*, *Copiar enlace* o *Compartir enlace*, T-Box le entrega a esa app un **enlace temporal de descarga de TorBox**. Esos enlaces no contienen tu API key.
+- **GitHub (aviso de versión nueva):** como máximo cada 12 horas, T-Box le pregunta a la API pública de GitHub cuál es la última versión, para mostrar el aviso de actualización. Es una consulta anónima, sin cuenta, API key ni datos personales; GitHub ve tu dirección IP como cualquier sitio web.
 - **GitHub y Ko-fi:** los enlaces de Opina y Apoyar solo abren esos sitios en tu navegador. T-Box no les envía nada; la versión de la app y de iOS solo aparecen completadas en el formulario de error que ves antes de enviarlo.
 
 T-Box no vende, arrienda ni comparte tus datos con nadie más.

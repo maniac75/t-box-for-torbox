@@ -3,6 +3,7 @@ import UniformTypeIdentifiers
 import UIKit
 
 struct SettingsView: View {
+    @ObservedObject private var updates = UpdateChecker.shared
     @EnvironmentObject private var state: AppState
     @Environment(\.openURL) private var openURL
     @State private var confirmLogout = false
@@ -19,6 +20,17 @@ struct SettingsView: View {
     var body: some View {
         NavigationStack {
             Form {
+                if updates.updateAvailable, let v = updates.latestVersion {
+                    Section {
+                        Link(destination: updates.releaseURL) {
+                            Label(String(format: L("T-Box %@ disponible"), v), systemImage: "arrow.down.app.fill")
+                                .font(.headline)
+                        }
+                    } footer: {
+                        Text(String(format: L("Tienes la %@. Descarga la nueva y fírmala como siempre, o actualízala desde la fuente de T-Box en Feather."), updates.current))
+                    }
+                }
+
                 Section("Cuenta TorBox") {
                     LabeledContent("Correo", value: state.user?.email ?? "—")
                     LabeledContent("Plan", value: state.user?.planName ?? "—")

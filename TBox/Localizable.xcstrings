@@ -1131,6 +1131,16 @@
         }
       }
     },
+    "En tu instalación, iOS no permite descargas en segundo plano. Mantén T-Box abierta mientras descarga y no la cierres desde el selector de apps.": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "On your install, iOS doesn't allow background downloads. Keep T-Box open while it downloads and don't close it from the app switcher."
+          }
+        }
+      }
+    },
     "Enlace copiado (válido ~3 h)": {
       "localizations": {
         "en": {
@@ -2061,6 +2071,16 @@
         }
       }
     },
+    "Reintentar": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Retry"
+          }
+        }
+      }
+    },
     "Renombrado": {
       "localizations": {
         "en": {
@@ -2271,6 +2291,16 @@
         }
       }
     },
+    "T-Box %@ disponible": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "T-Box %@ available"
+          }
+        }
+      }
+    },
     "T-Box (En mi iPhone)": {
       "localizations": {
         "en": {
@@ -2341,6 +2371,16 @@
         }
       }
     },
+    "Tienes la %@. Descarga la nueva y fírmala como siempre, o actualízala desde la fuente de T-Box en Feather.": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "You have %@. Download the new one and sign it as usual, or update it from the T-Box source in Feather."
+          }
+        }
+      }
+    },
     "Toca + o abre un magnet desde Safari.": {
       "localizations": {
         "en": {
@@ -2357,6 +2397,16 @@
           "stringUnit": {
             "state": "translated",
             "value": "Tap + and paste a link from YouTube, Instagram, X, Mega or another site."
+          }
+        }
+      }
+    },
+    "Toca una descarga fallida para reintentarla.": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Tap a failed download to retry it."
           }
         }
       }

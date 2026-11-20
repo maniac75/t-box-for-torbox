@@ -1,0 +1,3 @@
+• Open in VidHub (thanks @goon-123)
+• Notice in Account when a new version is out
+• Retry failed downloads with one tap
