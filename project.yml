@@ -66,6 +66,7 @@ targets:
       - path: TBox/TorBoxAPI.swift
       - path: TBox/Config.swift
       - path: TBox/Diagnostics.swift
+      - path: TBox/UpdateChecker.swift
     settings:
       base:
         PRODUCT_BUNDLE_IDENTIFIER: io.github.maniac75.tbox.tests
