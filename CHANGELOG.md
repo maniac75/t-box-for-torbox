@@ -2,7 +2,7 @@
 
 Format: [Keep a Changelog](https://keepachangelog.com/en/1.1.0/). Versions before 0.3.0 are pre-releases.
 
-## [0.3.3] - unreleased
+## [0.3.3] - 2026-11-19
 
 ### Added
 - Open in VidHub, alongside Infuse and VLC (thanks @goon-123).
