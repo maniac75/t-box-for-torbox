@@ -10,6 +10,7 @@ Format: [Keep a Changelog](https://keepachangelog.com/en/1.1.0/). Versions befor
 - Select several items to favorite, AirLock, download to iPhone or delete them in one go.
 - Downloads to iPhone show live progress on the Lock Screen and in the Dynamic Island, with time left.
 - Download speed and time left for each download to iPhone.
+- Faster downloads to iPhone: big files download in 4 to 6 parts at once and are joined at the end. Works in the background too. Can be turned off in Account.
 - Long-press an item for quick actions.
 
 ### Changed

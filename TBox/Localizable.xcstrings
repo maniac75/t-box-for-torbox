@@ -921,6 +921,16 @@
         }
       }
     },
+    "Descarga rápida en varias partes": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Fast download in several parts"
+          }
+        }
+      }
+    },
     "Descarga terminada": {
       "localizations": {
         "en": {
@@ -1117,6 +1127,16 @@
           "stringUnit": {
             "state": "translated",
             "value": "Diagnostics"
+          }
+        }
+      }
+    },
+    "El archivo unido quedó incompleto. Reintenta la descarga.": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "The joined file is incomplete. Try the download again."
           }
         }
       }
@@ -1781,12 +1801,12 @@
         }
       }
     },
-    "Lo que bajes queda en la carpeta T-Box de la app Archivos, aunque la app esté cerrada. Para llevar un archivo a iCloud u otra carpeta: En el iPhone › desliza › Compartir › Guardar en Archivos.": {
+    "Lo que bajes queda en la carpeta T-Box de la app Archivos, aunque la app esté cerrada. Para llevar un archivo a iCloud u otra carpeta: En el iPhone › desliza › Compartir › Guardar en Archivos.\n\nLa descarga rápida pide los archivos de más de 32 MB en 4 a 6 partes a la vez y las une al final. Si algo falla, desactívala.": {
       "localizations": {
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "Downloads go to the T-Box folder in the Files app, even when the app is closed. To move a file to iCloud or another folder: On iPhone › swipe › Share › Save to Files."
+            "value": "What you download stays in the T-Box folder of the Files app, even with the app closed. To move a file to iCloud or another folder: On iPhone › swipe › Share › Save to Files.\n\nFast download requests files over 32 MB in 4 to 6 parts at once and joins them at the end. If something goes wrong, turn it off."
           }
         }
       }

@@ -13,6 +13,7 @@ struct SettingsView: View {
     @State private var shareURL: URL?
     @State private var busy = false
     @State private var unzip = AppSettings.unzipAfterDownload
+    @State private var multipart = AppSettings.multipartDownloads
     @State private var notificationsOn = Notifier.enabled
     @State private var ntfyTopic = AppSettings.ntfyTopic
     @State private var confirmNtfy = false
@@ -82,10 +83,12 @@ struct SettingsView: View {
                     LabeledContent("Carpeta", value: L("Archivos › En mi iPhone › T-Box"))
                     Toggle("Descomprimir .zip al terminar", isOn: $unzip)
                         .onChange(of: unzip) { _, v in AppSettings.unzipAfterDownload = v }
+                    Toggle("Descarga rápida en varias partes", isOn: $multipart)
+                        .onChange(of: multipart) { _, v in AppSettings.multipartDownloads = v }
                 } header: {
                     Text("Descargas")
                 } footer: {
-                    Text("Lo que bajes queda en la carpeta T-Box de la app Archivos, aunque la app esté cerrada. Para llevar un archivo a iCloud u otra carpeta: En el iPhone › desliza › Compartir › Guardar en Archivos.")
+                    Text("Lo que bajes queda en la carpeta T-Box de la app Archivos, aunque la app esté cerrada. Para llevar un archivo a iCloud u otra carpeta: En el iPhone › desliza › Compartir › Guardar en Archivos.\n\nLa descarga rápida pide los archivos de más de 32 MB en 4 a 6 partes a la vez y las une al final. Si algo falla, desactívala.")
                 }
 
                 Section {

@@ -58,8 +58,10 @@ final class DownloadManager: NSObject, ObservableObject, URLSessionDownloadDeleg
     /// true si esta instalación descarga por la vía normal (plan B): la app debe quedar abierta.
     @Published private(set) var usesForegroundDownloads = UserDefaults.standard.bool(forKey: "downloads.useForeground")
     var backgroundCompletion: (() -> Void)?
+    /// Descargas en varias partes en curso (solo se tocan desde el hilo principal).
+    var turboJobs: [String: TurboJob] = TurboStore.load()
 
-    private lazy var session: URLSession = {
+    lazy var session: URLSession = {
         let c = URLSessionConfiguration.background(withIdentifier: "io.github.maniac75.tbox.downloads")
         c.sessionSendsLaunchEvents = true
         c.isDiscretionary = false
@@ -69,7 +71,7 @@ final class DownloadManager: NSObject, ObservableObject, URLSessionDownloadDeleg
 
     /// Plan B: sesión normal (no de fondo). Algunas instalaciones por sideload no dejan que el servicio
     /// de descargas de iOS cree archivos ("Cannot create file"); ahí se reintenta por esta vía.
-    private lazy var foregroundSession: URLSession = {
+    lazy var foregroundSession: URLSession = {
         let c = URLSessionConfiguration.default
         c.allowsCellularAccess = true
         c.timeoutIntervalForResource = 60 * 60 * 24
@@ -83,7 +85,7 @@ final class DownloadManager: NSObject, ObservableObject, URLSessionDownloadDeleg
     }
 
     /// Si la sesión de fondo ya falló así una vez, las siguientes descargas van directo por la normal.
-    private static var useForeground: Bool {
+    static var useForeground: Bool {
         get { UserDefaults.standard.bool(forKey: "downloads.useForeground") }
         set {
             UserDefaults.standard.set(newValue, forKey: "downloads.useForeground")
@@ -107,17 +109,51 @@ final class DownloadManager: NSObject, ObservableObject, URLSessionDownloadDeleg
         reloadLocalFiles()
         session.getAllTasks { [weak self] tasks in
             let restored: [Item] = tasks.compactMap { t in
-                guard let dt = t as? URLSessionDownloadTask, t.state == .running || t.state == .suspended else { return nil }
+                guard let dt = t as? URLSessionDownloadTask, t.state == .running || t.state == .suspended,
+                      TurboStore.parse(dt.taskDescription) == nil else { return nil }
                 let info = Self.parse(dt.taskDescription)
                 return Item(id: dt.taskIdentifier, name: info.name, progress: 0,
                             received: 0, expected: 0, status: .running, toPhotos: info.toPhotos, task: dt,
                             url: dt.originalRequest?.url)
             }
-            DispatchQueue.main.async { self?.items = restored }
+            let live = Set(tasks.filter { $0.state == .running || $0.state == .suspended }
+                .compactMap { TurboStore.parse($0.taskDescription) }.map { "\($0.jobID)::\($0.index)" })
+            DispatchQueue.main.async {
+                self?.items = restored
+                self?.restoreTurbo(live: live)
+            }
         }
     }
 
     func start(url: URL, filename: String, saveToPhotos: Bool = false) {
+        guard AppSettings.multipartDownloads else {
+            startSingle(url: url, filename: filename, saveToPhotos: saveToPhotos)
+            return
+        }
+        // Se muestra al tiro; después de medir el archivo se decide si va en partes.
+        let placeholder = nextTurboID()
+        let item = Item(id: placeholder, name: filename, progress: 0, received: 0, expected: 0,
+                        status: .running, toPhotos: saveToPhotos, task: nil, url: url)
+        DispatchQueue.main.async { self.items.insert(item, at: 0) }
+        Task {
+            if let (resolved, total) = await TurboStore.probe(url), total >= TurboJob.minimumSize {
+                await MainActor.run {
+                    guard self.items.contains(where: { $0.id == placeholder }) else { return }   // cancelada
+                    self.startTurbo(TurboJob.make(original: url, url: resolved, name: filename, toPhotos: saveToPhotos,
+                                                  total: total, itemID: placeholder, foreground: Self.useForeground))
+                }
+            } else {
+                await MainActor.run {
+                    guard self.items.contains(where: { $0.id == placeholder }) else { return }
+                    self.items.removeAll { $0.id == placeholder }
+                    self.startSingle(url: url, filename: filename, saveToPhotos: saveToPhotos)
+                }
+            }
+        }
+    }
+
+    /// Una sola conexión (archivos chicos, o servidores que no aceptan tramos).
+    func startSingle(url: URL, filename: String, saveToPhotos: Bool) {
         let s = Self.useForeground ? foregroundSession : session
         let task = s.downloadTask(with: url)
         task.taskDescription = (saveToPhotos ? Self.photosPrefix : "") + filename
@@ -142,13 +178,22 @@ final class DownloadManager: NSObject, ObservableObject, URLSessionDownloadDeleg
 
     func cancel(_ item: Item) {
         item.task?.cancel()
+        if let job = turboJobs.values.first(where: { $0.itemID == item.id }) { dropTurbo(job.jobID) }
         items.removeAll { $0.id == item.id }
     }
 
     /// Cancela todo lo que está bajando, incluidas tareas que quedaron colgadas en la sesión de fondo.
     func cancelAll() {
         session.getAllTasks { tasks in tasks.forEach { $0.cancel() } }
-        DispatchQueue.main.async { self.items.removeAll { $0.status == .running } }
+        foregroundSession.getAllTasks { tasks in
+            tasks.filter { TurboStore.parse($0.taskDescription) != nil }.forEach { $0.cancel() }
+        }
+        DispatchQueue.main.async {
+            for id in self.turboJobs.keys { TurboStore.remove(id) }
+            self.turboJobs.removeAll()
+            TurboStore.save(self.turboJobs)
+            self.items.removeAll { $0.status == .running }
+        }
     }
 
     func clearFinished() {
@@ -173,13 +218,13 @@ final class DownloadManager: NSObject, ObservableObject, URLSessionDownloadDeleg
         reloadLocalFiles()
     }
 
-    private func update(_ id: Int, _ change: @escaping (inout Item) -> Void) {
+    func update(_ id: Int, _ change: @escaping (inout Item) -> Void) {
         DispatchQueue.main.async {
             if let i = self.items.firstIndex(where: { $0.id == id }) { change(&self.items[i]) }
         }
     }
 
-    private static func uniqueDestination(for name: String) -> URL {
+    static func uniqueDestination(for name: String) -> URL {
         let clean = name.replacingOccurrences(of: "/", with: "_")
         var dest = downloadsDir.appendingPathComponent(clean)
         let base = (clean as NSString).deletingPathExtension
@@ -230,29 +275,42 @@ final class DownloadManager: NSObject, ObservableObject, URLSessionDownloadDeleg
 
     func urlSession(_ session: URLSession, downloadTask: URLSessionDownloadTask, didWriteData bytesWritten: Int64,
                     totalBytesWritten: Int64, totalBytesExpectedToWrite: Int64) {
+        if let part = TurboStore.parse(downloadTask.taskDescription) {
+            turboProgress(part.jobID, part.index, totalBytesWritten)
+            return
+        }
         update(itemID(session, downloadTask)) { item in
-            let now = Date()
-            if let at = item.sampleAt {
-                let dt = now.timeIntervalSince(at)
-                if dt >= 1, totalBytesWritten >= item.sampleBytes {
-                    let v = Double(totalBytesWritten - item.sampleBytes) / dt
-                    // Tras una pausa larga (app dormida) se toma la medición tal cual.
-                    item.speed = item.speed > 0 && dt < 10 ? item.speed * 0.7 + v * 0.3 : v
-                    item.sampleBytes = totalBytesWritten
-                    item.sampleAt = now
-                }
-            } else {
-                item.sampleBytes = totalBytesWritten
+            Self.applyProgress(&item, received: totalBytesWritten, expected: totalBytesExpectedToWrite)
+        }
+    }
+
+    /// Avance y velocidad suavizada (muestras de al menos 1 s).
+    static func applyProgress(_ item: inout Item, received: Int64, expected: Int64) {
+        let now = Date()
+        if let at = item.sampleAt {
+            let dt = now.timeIntervalSince(at)
+            if dt >= 1, received >= item.sampleBytes {
+                let v = Double(received - item.sampleBytes) / dt
+                // Tras una pausa larga (app dormida) se toma la medición tal cual.
+                item.speed = item.speed > 0 && dt < 10 ? item.speed * 0.7 + v * 0.3 : v
+                item.sampleBytes = received
                 item.sampleAt = now
             }
-            item.received = totalBytesWritten
-            item.expected = totalBytesExpectedToWrite
-            item.progress = totalBytesExpectedToWrite > 0 ? Double(totalBytesWritten) / Double(totalBytesExpectedToWrite) : 0
+        } else {
+            item.sampleBytes = received
+            item.sampleAt = now
         }
+        item.received = received
+        item.expected = expected
+        item.progress = expected > 0 ? Double(received) / Double(expected) : 0
     }
 
     func urlSession(_ session: URLSession, downloadTask: URLSessionDownloadTask, didFinishDownloadingTo location: URL) {
         // El archivo temporal se borra al salir de este método: hay que moverlo aquí mismo.
+        if let part = TurboStore.parse(downloadTask.taskDescription) {
+            turboPartFinished(part.jobID, part.index, location: location, response: downloadTask.response)
+            return
+        }
         let status = (downloadTask.response as? HTTPURLResponse)?.statusCode ?? 200
         guard (200..<300).contains(status) else {
             Diagnostics.log("DOWNLOAD HTTP \(status) \(downloadTask.taskDescription ?? "")")
@@ -269,7 +327,13 @@ final class DownloadManager: NSObject, ObservableObject, URLSessionDownloadDeleg
             update(id) { $0.status = .failed(error.localizedDescription) }
             return
         }
-        update(id) { $0.progress = 1 }
+        finalize(dest, name: info.name, toPhotos: info.toPhotos, id: id)
+    }
+
+    /// Después de tener el archivo completo: a Fotos, o descomprimir y llevar a la carpeta elegida.
+    func finalize(_ dest: URL, name: String, toPhotos: Bool, id: Int) {
+        let info = (name: name, toPhotos: toPhotos)
+        update(id) { $0.progress = 1; $0.received = $0.expected }
         if info.toPhotos {
             Self.saveToPhotos(dest) { [weak self] result in
                 switch result {
@@ -360,6 +424,10 @@ final class DownloadManager: NSObject, ObservableObject, URLSessionDownloadDeleg
         guard let error else { return }
         let ns = error as NSError
         if ns.code == NSURLErrorCancelled { return }
+        if let part = TurboStore.parse(task.taskDescription) {
+            turboPartFailed(part.jobID, part.index, error: error)
+            return
+        }
         let old = itemID(session, task)
         Diagnostics.log("DOWNLOAD error \(task.taskDescription ?? "") [\(session === foregroundSession ? "normal" : "background")]: \(Self.describe(error))")
         // Plan B: si iOS no pudo crear el archivo en la sesión de fondo, se repite como descarga normal.

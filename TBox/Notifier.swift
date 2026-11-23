@@ -74,6 +74,12 @@ enum Notifier {
 enum AppSettings {
     private static let d = UserDefaults.standard
 
+    /// Bajar archivos grandes en varias partes a la vez (activado por omisión).
+    static var multipartDownloads: Bool {
+        get { d.object(forKey: "downloads.multipart") as? Bool ?? true }
+        set { d.set(newValue, forKey: "downloads.multipart") }
+    }
+
     static var unzipAfterDownload: Bool {
         get { d.bool(forKey: "downloads.unzip") }
         set { d.set(newValue, forKey: "downloads.unzip") }
