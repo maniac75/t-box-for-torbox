@@ -1,7 +1,7 @@
 # Sites supported by web downloads
 
 Sites TorBox can download from (the **Web** tab in T-Box). *Sitios desde los que TorBox puede descargar (pestaña **Web**).*
-Updated automatically from the TorBox API: 2026-11-16.
+Updated automatically from the TorBox API: 2026-11-23.
 
 - ✅ available · ⚠️ having issues or down right now
 - **Daily limit**: links per day per account (— = no limit).
