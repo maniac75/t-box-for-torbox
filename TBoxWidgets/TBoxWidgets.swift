@@ -83,8 +83,8 @@ struct TrailingValue: View {
     let state: DownloadActivityAttributes.ContentState
     var body: some View {
         Group {
-            if let range = state.estimate {
-                Text(timerInterval: Date.now...max(range.upperBound, Date.now), countsDown: true, showsHours: false)
+            if let range = state.estimate, range.upperBound.timeIntervalSinceNow < 2 * 3600 {
+                Text(timerInterval: Date.now...max(range.upperBound, Date.now), countsDown: true, showsHours: true)
                     .multilineTextAlignment(.trailing)
             } else {
                 Text(DownloadLiveActivity.percent(state.finished ? 1 : state.progress))

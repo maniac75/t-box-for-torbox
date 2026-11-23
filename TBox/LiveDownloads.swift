@@ -17,8 +17,11 @@ final class LiveDownloads {
 
     func start() {
         guard cancellable == nil else { return }
-        // Si quedó una de una sesión anterior, se reutiliza en vez de abrir otra.
-        activity = Activity<DownloadActivityAttributes>.activities.first
+        // Las que quedaron de una sesión anterior (app cerrada o reinstalada) se cierran:
+        // su estimación ya no vale y no se deben ver dos a la vez.
+        for old in Activity<DownloadActivityAttributes>.activities {
+            Task { await old.end(nil, dismissalPolicy: .immediate) }
+        }
         cancellable = DownloadManager.shared.$items
             .receive(on: RunLoop.main)
             .sink { [weak self] items in
@@ -60,10 +63,12 @@ final class LiveDownloads {
         speed = running.reduce(0) { $0 + $1.speed }
         state.speed = Int64(speed)
         let now = Date()
-        if speed > 1024, expected > received {
+        // Solo se estima con una velocidad ya estable y un fin razonable (menos de 2 h);
+        // si no, se muestra el porcentaje, que nunca engaña.
+        if speed > 64 * 1024, expected > received, received > 4 * 1024 * 1024 {
             let remaining = Double(expected - received) / speed
             let elapsed = Double(received) / speed
-            if remaining < 24 * 3600 {
+            if remaining < 2 * 3600 {
                 state.estimatedStart = now.addingTimeInterval(-elapsed)
                 state.estimatedEnd = now.addingTimeInterval(remaining)
             }
