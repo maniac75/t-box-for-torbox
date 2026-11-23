@@ -65,7 +65,7 @@ struct TorrentDetailView: View {
             Section {
                 Text(t.name).font(.headline).textSelection(.enabled)
                 HStack { StateBadge(torrent: t); Spacer(); Text(Fmt.bytes(t.size)).foregroundStyle(.secondary) }
-                if !t.isReady {
+                if !t.isReady && t.failureText == nil {
                     ProgressView(value: min(max(t.progress, 0), 1))
                     LabeledContent("Velocidad", value: "↓ \(Fmt.speed(t.downloadSpeed))  ↑ \(Fmt.speed(t.uploadSpeed))")
                     if let eta = Fmt.eta(t.eta) { LabeledContent("Tiempo restante", value: eta) }
@@ -102,11 +102,17 @@ struct TorrentDetailView: View {
                 }
             } else {
                 Section {
-                    if let err = t.errorText {
-                        Label(err, systemImage: "exclamationmark.triangle").foregroundStyle(.red)
+                    if let err = t.failureText {
+                        Label(err, systemImage: "exclamationmark.triangle")
+                            .foregroundStyle(.red)
+                            .textSelection(.enabled)
                     } else {
                         Text("Los archivos estarán disponibles cuando TorBox termine de descargar.")
                             .foregroundStyle(.secondary).font(.footnote)
+                    }
+                } footer: {
+                    if t.failureText != nil {
+                        Text("TorBox no pudo bajar esto. Puedes borrarlo y volver a agregarlo más tarde.")
                     }
                 }
             }

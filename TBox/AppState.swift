@@ -87,7 +87,7 @@ final class AppState: ObservableObject {
 
     /// Lo que TorBox está procesando ahora (sin contar los que fallaron).
     var activeInTorBox: [Torrent] {
-        (torrents + webDownloads).filter { !$0.isReady && $0.errorText == nil }
+        (torrents + webDownloads).filter { !$0.isReady && $0.failureText == nil }
     }
 
     func items(_ kind: ItemKind) -> [Torrent] {
@@ -188,7 +188,7 @@ final class AppState: ObservableObject {
             while !Task.isCancelled {
                 try? await Task.sleep(nanoseconds: 5_000_000_000)
                 guard let self else { return }
-                let busy = (self.torrents + self.webDownloads).contains { !$0.isReady && $0.errorText == nil }
+                let busy = (self.torrents + self.webDownloads).contains { !$0.isReady && $0.failureText == nil }
                 if busy { await self.refresh() }
             }
         }

@@ -262,6 +262,21 @@ struct Torrent: Decodable, Identifiable, Hashable {
 
     var isReady: Bool { downloadPresent || downloadFinished }
 
+    /// Motivo de la falla. TorBox a veces lo manda en "error" y a veces dentro del estado
+    /// (las descargas web fallidas traen el mensaje de yt-dlp en download_state).
+    var failureText: String? {
+        if let e = errorText?.trimmingCharacters(in: .whitespacesAndNewlines), !e.isEmpty { return e }
+        guard !isReady else { return nil }
+        let s = downloadState.trimmingCharacters(in: .whitespacesAndNewlines)
+        let l = s.lowercased()
+        guard l.contains("error") || l.hasPrefix("failed") else { return nil }
+        if let r = s.range(of: "ERROR:", options: .caseInsensitive) {
+            let msg = s[r.upperBound...].trimmingCharacters(in: .whitespaces)
+            if !msg.isEmpty { return msg }
+        }
+        return l == "error" ? L("TorBox no pudo completar la descarga.") : s
+    }
+
     var createdDate: Date? { createdAt.flatMap(TorBoxDate.parse) }
 
     var sortedFiles: [TorrentFile] {
@@ -372,7 +387,10 @@ enum Fmt {
         case "checkingresumedata", "checking": return L("Verificando")
         case "queued", "queuedup": return L("En cola")
         case "error": return L("Error")
-        default: return raw.prefix(1).uppercased() + raw.dropFirst()
+        default:
+            // Estados desconocidos: nunca un texto largo en la etiqueta.
+            let s = raw.prefix(1).uppercased() + raw.dropFirst()
+            return s.count > 24 ? String(s.prefix(22)) + "…" : s
         }
     }
 }
@@ -525,7 +543,7 @@ struct ReadyTracker {
                 let k = prefix + String(item.id)
                 if item.isReady {
                     if pending.removeValue(forKey: k) != nil, stored != nil { ready.append(item) }
-                } else if item.errorText == nil {
+                } else if item.failureText == nil {
                     pending[k] = item.name
                 }
             }

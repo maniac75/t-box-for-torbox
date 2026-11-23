@@ -47,6 +47,20 @@ final class DecodingTests: XCTestCase {
         XCTAssertTrue(list[0].files[0].canSaveToPhotos)
     }
 
+    /// Las descargas web fallidas traen el error de yt-dlp en download_state y "error" vacío.
+    func testFailureInDownloadState() throws {
+        let json = """
+        {"success":true,"data":[
+          {"id":7,"name":"Video","size":0,"progress":0,"download_finished":false,"download_present":false,
+           "download_state":"[youtube] abc: ERROR: unable to download video data: HTTP Error 403: Forbidden","files":[]},
+          {"id":8,"name":"Otro","size":0,"progress":0.3,"download_state":"downloading","files":[]}
+        ]}
+        """
+        let list = try XCTUnwrap(decoder.decode(APIEnvelope<[Torrent]>.self, from: Data(json.utf8)).data)
+        XCTAssertEqual(list[0].failureText, "unable to download video data: HTTP Error 403: Forbidden")
+        XCTAssertNil(list[1].failureText)
+    }
+
     func testAirlockedField() throws {
         let on = try JSONDecoder().decode(Torrent.self, from: Data(#"{"id":1,"name":"a","airlocked":true,"download_present":true}"#.utf8))
         let off = try JSONDecoder().decode(Torrent.self, from: Data(#"{"id":2,"name":"b"}"#.utf8))

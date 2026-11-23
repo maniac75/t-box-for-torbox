@@ -17,7 +17,7 @@ struct TorrentRow: View {
                     .font(.subheadline.weight(.semibold))
                     .lineLimit(2)
             }
-            if let err = torrent.errorText, !torrent.isReady {
+            if let err = torrent.failureText, !torrent.isReady {
                 Text(err).font(.caption).foregroundStyle(.red).lineLimit(2)
             } else if !torrent.isReady {
                 ProgressView(value: min(max(torrent.progress, 0), 1))
@@ -50,7 +50,7 @@ struct StateBadge: View {
 
     var body: some View {
         let ready = torrent.isReady
-        let failed = torrent.errorText != nil && !ready
+        let failed = torrent.failureText != nil && !ready
         let stalled = torrent.downloadState.lowercased().hasPrefix("stalled")
         let color: Color = ready ? .green : (failed ? .red : (stalled ? .orange : .blue))
         Text(ready ? L("Listo") : (failed ? L("Error") : Fmt.state(torrent.downloadState) + " \(Int(torrent.progress * 100))%"))

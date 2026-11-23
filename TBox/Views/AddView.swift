@@ -339,7 +339,7 @@ private struct EntryRow: View {
                     }
                     .buttonStyle(.bordered)
                     .font(.footnote)
-                } else if t.errorText == nil {
+                } else if t.failureText == nil {
                     ProgressView(value: min(max(t.progress, 0), 1))
                 }
             }
@@ -372,7 +372,7 @@ private struct EntryRow: View {
             Text("Enviado. Aparecerá en la lista en unos segundos.").font(.caption).foregroundStyle(.secondary)
         case .added(let msg):
             if let t = live {
-                if let err = t.errorText, !t.isReady {
+                if let err = t.failureText, !t.isReady {
                     Text(err).font(.caption).foregroundStyle(.red)
                 } else if t.isReady {
                     Text("Listo en TorBox").font(.caption).foregroundStyle(.green)
