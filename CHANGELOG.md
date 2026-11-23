@@ -2,19 +2,20 @@
 
 Format: [Keep a Changelog](https://keepachangelog.com/en/1.1.0/). Versions before 0.3.0 are pre-releases.
 
-## [0.4.0] - Unreleased
+## [0.4.0] - 2026-11-23
 
 ### Added
-- One Library tab for torrents and web downloads, with All / Torrents / Web.
-- Filter (in progress, ready, favorites) and sort (newest, oldest, name, size). T-Box remembers your choice.
-- Select several items to favorite, AirLock, download to iPhone or delete them in one go.
-- Downloads to iPhone show live progress on the Lock Screen and in the Dynamic Island, with time left.
-- Download speed and time left for each download to iPhone.
-- Faster downloads to iPhone: big files download in 4 to 6 parts at once and are joined at the end. Works in the background too. Can be turned off in Account.
-- Long-press an item for quick actions.
+- Up to 10x faster downloads to iPhone: big files download in several parts at once (can be turned off in Account).
+- Live progress in the Dynamic Island and on the Lock Screen.
+- Speed and time left for each download.
+- Select several items to favorite, AirLock, download or delete them at once.
+- Filter and sort your library.
 
 ### Changed
-- The Torrents and Web tabs are now a single Library tab.
+- Torrents and Web are now one Library tab.
+
+### Fixed
+- Failed web downloads show as errors instead of looking stuck.
 
 ## [0.3.3] - 2026-11-19
 

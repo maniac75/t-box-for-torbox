@@ -1,0 +1,5 @@
+• Up to 10x faster downloads to iPhone
+• Live progress in the Dynamic Island
+• Speed and time left for each download
+• One Library tab with filters, sorting and multi-select
+• Failed web downloads show as errors
