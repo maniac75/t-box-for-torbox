@@ -111,10 +111,8 @@ struct ActivitySheet: View {
                             VStack(alignment: .leading, spacing: 4) {
                                 Text(item.name).font(.subheadline).lineLimit(2)
                                 ProgressView(value: item.progress).tint(.green)
-                                Text(item.expected > 0
-                                     ? String(format: L("%@ de %@"), Fmt.bytes(item.received), Fmt.bytes(item.expected))
-                                     : L("Iniciando…"))
-                                    .font(.caption).foregroundStyle(.secondary)
+                                Text(item.detailText)
+                                    .font(.caption).foregroundStyle(.secondary).monospacedDigit()
                             }
                             .swipeActions {
                                 Button(role: .destructive) { downloads.cancel(item) } label: {
@@ -183,6 +181,8 @@ struct DownloadStatusRow: View {
             switch item.status {
             case .running:
                 ProgressView(value: item.progress)
+                Text(item.detailText)
+                    .font(.caption).foregroundStyle(.secondary).monospacedDigit()
             case .done:
                 Label(item.savedTo.map { L("Guardado en ") + $0 } ?? L("Completada"),
                       systemImage: "checkmark.circle.fill")

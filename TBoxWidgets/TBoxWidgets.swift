@@ -117,9 +117,8 @@ struct DetailLine: View {
             if state.finished {
                 Text("Toca para abrir T-Box")
             } else if state.expected > 0, state.estimate != nil {
-                // Los bytes no se pueden actualizar con la app dormida: solo el total.
-                Text(String(format: String(localized: "%@ · tiempo estimado"),
-                            ByteCountFormatter.string(fromByteCount: state.expected, countStyle: .file)))
+                // Los bytes no se pueden actualizar con la app dormida: total y velocidad.
+                Text("\(ByteCountFormatter.string(fromByteCount: state.expected, countStyle: .file)) · \(ByteCountFormatter.string(fromByteCount: state.speed, countStyle: .file))/s")
             } else if state.expected > 0 {
                 Text("\(ByteCountFormatter.string(fromByteCount: state.received, countStyle: .file)) / \(ByteCountFormatter.string(fromByteCount: state.expected, countStyle: .file))")
             } else {

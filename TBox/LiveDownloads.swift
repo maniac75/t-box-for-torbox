@@ -14,7 +14,6 @@ final class LiveDownloads {
     private var lastSentAt = Date.distantPast
     /// Velocidad suavizada (bytes/s) para estimar el fin.
     private var speed: Double = 0
-    private var sample: (received: Int64, at: Date)?
 
     func start() {
         guard cancellable == nil else { return }
@@ -41,7 +40,6 @@ final class LiveDownloads {
             activity = nil
             lastSent = nil
             speed = 0
-            sample = nil
             Task {
                 await current.end(ActivityContent(state: final, staleDate: nil),
                                   dismissalPolicy: .after(Date.now.addingTimeInterval(15 * 60)))
@@ -59,18 +57,9 @@ final class LiveDownloads {
             count: running.count, progress: min(max(rawProgress, 0), 1),
             received: received, expected: expected, finished: false)
 
-        // Velocidad: promedio suavizado entre muestras de al menos 1 s.
+        speed = running.reduce(0) { $0 + $1.speed }
+        state.speed = Int64(speed)
         let now = Date()
-        if let s = sample, received >= s.received {
-            let dt = now.timeIntervalSince(s.at)
-            if dt >= 1 {
-                let v = Double(received - s.received) / dt
-                speed = speed > 0 ? speed * 0.7 + v * 0.3 : v
-                sample = (received, now)
-            }
-        } else {
-            sample = (received, now)
-        }
         if speed > 1024, expected > received {
             let remaining = Double(expected - received) / speed
             let elapsed = Double(received) / speed

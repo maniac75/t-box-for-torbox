@@ -32,6 +32,25 @@ final class DownloadManager: NSObject, ObservableObject, URLSessionDownloadDeleg
         var savedTo: String?
         var task: URLSessionDownloadTask?
         var url: URL?
+        /// Velocidad suavizada en bytes/s (0 mientras no hay medición).
+        var speed: Double = 0
+        var sampleBytes: Int64 = 0
+        var sampleAt: Date?
+
+        /// Segundos que faltan según la velocidad actual.
+        var secondsLeft: Int? {
+            guard speed > 0, expected > received else { return nil }
+            return Int(Double(expected - received) / speed)
+        }
+
+        /// "419,8 MB de 725,7 MB · 1,2 MB/s · 4 min"
+        var detailText: String {
+            guard expected > 0 else { return L("Iniciando…") }
+            var s = String(format: L("%@ de %@"), Fmt.bytes(received), Fmt.bytes(expected))
+            if speed > 0 { s += " · " + Fmt.speed(Int64(speed)) }
+            if let eta = Fmt.eta(secondsLeft) { s += " · " + eta }
+            return s
+        }
     }
 
     @Published var items: [Item] = []
@@ -212,6 +231,20 @@ final class DownloadManager: NSObject, ObservableObject, URLSessionDownloadDeleg
     func urlSession(_ session: URLSession, downloadTask: URLSessionDownloadTask, didWriteData bytesWritten: Int64,
                     totalBytesWritten: Int64, totalBytesExpectedToWrite: Int64) {
         update(itemID(session, downloadTask)) { item in
+            let now = Date()
+            if let at = item.sampleAt {
+                let dt = now.timeIntervalSince(at)
+                if dt >= 1, totalBytesWritten >= item.sampleBytes {
+                    let v = Double(totalBytesWritten - item.sampleBytes) / dt
+                    // Tras una pausa larga (app dormida) se toma la medición tal cual.
+                    item.speed = item.speed > 0 && dt < 10 ? item.speed * 0.7 + v * 0.3 : v
+                    item.sampleBytes = totalBytesWritten
+                    item.sampleAt = now
+                }
+            } else {
+                item.sampleBytes = totalBytesWritten
+                item.sampleAt = now
+            }
             item.received = totalBytesWritten
             item.expected = totalBytesExpectedToWrite
             item.progress = totalBytesExpectedToWrite > 0 ? Double(totalBytesWritten) / Double(totalBytesExpectedToWrite) : 0

@@ -14,6 +14,8 @@ struct DownloadActivityAttributes: ActivityAttributes {
         var received: Int64
         var expected: Int64
         var finished: Bool
+        /// Velocidad en bytes/s al momento de la última actualización.
+        var speed: Int64 = 0
         /// Estimación para que la barra avance sola mientras iOS tiene la app dormida:
         /// inicio virtual (cuando la barra estaría en 0) y fin estimado según la velocidad.
         var estimatedStart: Date? = nil

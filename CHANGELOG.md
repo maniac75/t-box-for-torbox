@@ -8,7 +8,8 @@ Format: [Keep a Changelog](https://keepachangelog.com/en/1.1.0/). Versions befor
 - One Library tab for torrents and web downloads, with All / Torrents / Web.
 - Filter (in progress, ready, favorites) and sort (newest, oldest, name, size). T-Box remembers your choice.
 - Select several items to favorite, AirLock, download to iPhone or delete them in one go.
-- Downloads to iPhone show live progress on the Lock Screen and in the Dynamic Island.
+- Downloads to iPhone show live progress on the Lock Screen and in the Dynamic Island, with time left.
+- Download speed and time left for each download to iPhone.
 - Long-press an item for quick actions.
 
 ### Changed
