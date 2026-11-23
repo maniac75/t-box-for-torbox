@@ -78,7 +78,7 @@ enum TurboStore {
     static func load() -> [String: TurboJob] {
         guard let data = try? Data(contentsOf: indexURL),
               var jobs = try? JSONDecoder().decode([String: TurboJob].self, from: data) else { return [:] }
-        for k in jobs.keys { jobs[k]?.received = Array(repeating: 0, count: jobs[k]?.partCount ?? 0) }
+        for (k, job) in jobs { jobs[k]?.received = Array(repeating: 0, count: job.partCount) }
         return jobs
     }
 
