@@ -33,6 +33,15 @@
       ],
       "versions": [
         {
+          "version": "0.4.0",
+          "buildVersion": "36",
+          "date": "2026-11-23",
+          "localizedDescription": "• Up to 10x faster downloads to iPhone\n• Live progress in the Dynamic Island\n• Speed and time left for each download\n• One Library tab with filters, sorting and multi-select\n• Failed web downloads show as errors",
+          "downloadURL": "https://github.com/maniac75/t-box-for-torbox/releases/download/v0.4.0/T-Box-0.4.0.ipa",
+          "size": 1223323,
+          "minOSVersion": "17.0"
+        },
+        {
           "version": "0.3.3",
           "buildVersion": "27",
           "date": "2026-11-20",
@@ -75,11 +84,11 @@
           "NSPhotoLibraryAddUsageDescription": "To save images and videos you download from TorBox to Photos."
         }
       },
-      "version": "0.3.3",
-      "versionDate": "2026-11-20",
-      "versionDescription": "• Open in VidHub (thanks @goon-123)\n• Notice in Account when a new version is out\n• Retry failed downloads with one tap",
-      "downloadURL": "https://github.com/maniac75/t-box-for-torbox/releases/download/v0.3.3/T-Box-0.3.3.ipa",
-      "size": 990617
+      "version": "0.4.0",
+      "versionDate": "2026-11-23",
+      "versionDescription": "• Up to 10x faster downloads to iPhone\n• Live progress in the Dynamic Island\n• Speed and time left for each download\n• One Library tab with filters, sorting and multi-select\n• Failed web downloads show as errors",
+      "downloadURL": "https://github.com/maniac75/t-box-for-torbox/releases/download/v0.4.0/T-Box-0.4.0.ipa",
+      "size": 1223323
     }
   ],
   "news": []
