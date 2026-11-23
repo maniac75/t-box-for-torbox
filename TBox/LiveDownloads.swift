@@ -12,6 +12,9 @@ final class LiveDownloads {
     private var cancellable: AnyCancellable?
     private var lastSent: DownloadActivityAttributes.ContentState?
     private var lastSentAt = Date.distantPast
+    /// Velocidad suavizada (bytes/s) para estimar el fin.
+    private var speed: Double = 0
+    private var sample: (received: Int64, at: Date)?
 
     func start() {
         guard cancellable == nil else { return }
@@ -37,6 +40,8 @@ final class LiveDownloads {
                 received: anyDone ? total : (lastSent?.received ?? 0), expected: total, finished: true)
             activity = nil
             lastSent = nil
+            speed = 0
+            sample = nil
             Task {
                 await current.end(ActivityContent(state: final, staleDate: nil),
                                   dismissalPolicy: .after(Date.now.addingTimeInterval(15 * 60)))
@@ -49,21 +54,46 @@ final class LiveDownloads {
         let rawProgress = expected > 0
             ? Double(received) / Double(expected)
             : running.map(\.progress).reduce(0, +) / Double(running.count)
-        let state = DownloadActivityAttributes.ContentState(
+        var state = DownloadActivityAttributes.ContentState(
             title: running.count == 1 ? running[0].name : String(format: L("%d descargas"), running.count),
             count: running.count, progress: min(max(rawProgress, 0), 1),
             received: received, expected: expected, finished: false)
 
+        // Velocidad: promedio suavizado entre muestras de al menos 1 s.
+        let now = Date()
+        if let s = sample, received >= s.received {
+            let dt = now.timeIntervalSince(s.at)
+            if dt >= 1 {
+                let v = Double(received - s.received) / dt
+                speed = speed > 0 ? speed * 0.7 + v * 0.3 : v
+                sample = (received, now)
+            }
+        } else {
+            sample = (received, now)
+        }
+        if speed > 1024, expected > received {
+            let remaining = Double(expected - received) / speed
+            let elapsed = Double(received) / speed
+            if remaining < 24 * 3600 {
+                state.estimatedStart = now.addingTimeInterval(-elapsed)
+                state.estimatedEnd = now.addingTimeInterval(remaining)
+            }
+        }
+
         if let current = activity {
             // iOS limita cuántas veces se puede actualizar: como mucho una vez por segundo,
             // y solo si cambió algo que se nota (1 % de avance, el número o el nombre).
+            // Con estimación la barra avanza sola: basta corregirla cada ~15 s.
             let sameShape = state.count == lastSent?.count && state.title == lastSent?.title
+                && (state.estimate == nil) == (lastSent?.estimate == nil)
             let smallStep = abs(state.progress - (lastSent?.progress ?? -1)) < 0.01
             let elapsed = Date().timeIntervalSince(lastSentAt)
-            if sameShape && (elapsed < 1 || (smallStep && elapsed < 10)) { return }
+            let minGap: TimeInterval = state.estimate != nil ? 15 : 10
+            if sameShape && (elapsed < 1 || (smallStep && elapsed < 10) || (state.estimate != nil && elapsed < minGap)) { return }
             lastSent = state
             lastSentAt = Date()
-            Task { await current.update(ActivityContent(state: state, staleDate: Date.now.addingTimeInterval(15 * 60))) }
+            let stale = (state.estimatedEnd ?? Date.now).addingTimeInterval(10 * 60)
+            Task { await current.update(ActivityContent(state: state, staleDate: stale)) }
         } else {
             guard ActivityAuthorizationInfo().areActivitiesEnabled else { return }
             do {

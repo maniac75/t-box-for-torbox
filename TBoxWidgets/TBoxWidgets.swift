@@ -10,6 +10,8 @@ struct TBoxWidgetsBundle: WidgetBundle {
 }
 
 /// Avance de las descargas al iPhone en la Dynamic Island y la pantalla de bloqueo.
+/// Mientras iOS tiene la app dormida no puede mandar el porcentaje, así que la barra
+/// y el tiempo restante avanzan solos según la última velocidad medida.
 struct DownloadLiveActivity: Widget {
     var body: some WidgetConfiguration {
         ActivityConfiguration(for: DownloadActivityAttributes.self) { context in
@@ -21,14 +23,12 @@ struct DownloadLiveActivity: Widget {
             let s = context.state
             return DynamicIsland {
                 DynamicIslandExpandedRegion(.leading) {
-                    Image(systemName: s.finished ? "checkmark.circle.fill" : "arrow.down.circle.fill")
-                        .font(.title2)
-                        .foregroundStyle(.green)
+                    StatusIcon(finished: s.finished).font(.title2)
                 }
                 DynamicIslandExpandedRegion(.trailing) {
-                    Text(Self.percent(s.progress))
+                    TrailingValue(state: s)
                         .font(.title3.weight(.semibold))
-                        .monospacedDigit()
+                        .frame(maxWidth: 76, alignment: .trailing)
                 }
                 DynamicIslandExpandedRegion(.center) {
                     Text(s.title)
@@ -37,41 +37,103 @@ struct DownloadLiveActivity: Widget {
                 }
                 DynamicIslandExpandedRegion(.bottom) {
                     VStack(alignment: .leading, spacing: 6) {
-                        ProgressView(value: s.progress)
-                            .tint(.green)
-                        Text(Self.detail(s))
+                        Bar(state: s)
+                        DetailLine(state: s)
                             .font(.caption)
                             .foregroundStyle(.secondary)
-                            .monospacedDigit()
                     }
                 }
             } compactLeading: {
-                Image(systemName: s.finished ? "checkmark.circle.fill" : "arrow.down.circle.fill")
-                    .foregroundStyle(.green)
+                StatusIcon(finished: s.finished)
             } compactTrailing: {
-                Text(Self.percent(s.progress))
+                TrailingValue(state: s)
                     .font(.caption.weight(.semibold))
-                    .monospacedDigit()
+                    .frame(maxWidth: 44)
             } minimal: {
-                Gauge(value: s.progress) {
-                    Image(systemName: "arrow.down")
+                if let range = s.estimate {
+                    ProgressView(timerInterval: range, countsDown: false) {
+                        EmptyView()
+                    } currentValueLabel: {
+                        Image(systemName: "arrow.down")
+                    }
+                    .progressViewStyle(.circular)
+                    .tint(.green)
+                } else {
+                    Gauge(value: s.progress) {
+                        Image(systemName: "arrow.down")
+                    }
+                    .gaugeStyle(.accessoryCircularCapacity)
+                    .tint(.green)
                 }
-                .gaugeStyle(.accessoryCircularCapacity)
-                .tint(.green)
             }
         }
     }
+}
 
+struct StatusIcon: View {
+    let finished: Bool
+    var body: some View {
+        Image(systemName: finished ? "checkmark.circle.fill" : "arrow.down.circle.fill")
+            .foregroundStyle(.green)
+    }
+}
+
+/// Tiempo restante (cuenta regresiva) si hay estimación; si no, el porcentaje.
+struct TrailingValue: View {
+    let state: DownloadActivityAttributes.ContentState
+    var body: some View {
+        Group {
+            if let range = state.estimate {
+                Text(timerInterval: Date.now...max(range.upperBound, Date.now), countsDown: true, showsHours: false)
+                    .multilineTextAlignment(.trailing)
+            } else {
+                Text(DownloadLiveActivity.percent(state.finished ? 1 : state.progress))
+            }
+        }
+        .monospacedDigit()
+        .lineLimit(1)
+        .minimumScaleFactor(0.6)
+    }
+}
+
+struct Bar: View {
+    let state: DownloadActivityAttributes.ContentState
+    var body: some View {
+        Group {
+            if let range = state.estimate {
+                ProgressView(timerInterval: range, countsDown: false) { EmptyView() } currentValueLabel: { EmptyView() }
+            } else {
+                ProgressView(value: state.finished ? 1 : state.progress)
+            }
+        }
+        .tint(.green)
+    }
+}
+
+struct DetailLine: View {
+    let state: DownloadActivityAttributes.ContentState
+    var body: some View {
+        Group {
+            if state.finished {
+                Text("Toca para abrir T-Box")
+            } else if state.expected > 0, state.estimate != nil {
+                // Los bytes no se pueden actualizar con la app dormida: solo el total.
+                Text(String(format: String(localized: "%@ · tiempo estimado"),
+                            ByteCountFormatter.string(fromByteCount: state.expected, countStyle: .file)))
+            } else if state.expected > 0 {
+                Text("\(ByteCountFormatter.string(fromByteCount: state.received, countStyle: .file)) / \(ByteCountFormatter.string(fromByteCount: state.expected, countStyle: .file))")
+            } else {
+                Text("Descargando en T-Box")
+            }
+        }
+        .monospacedDigit()
+        .lineLimit(1)
+    }
+}
+
+extension DownloadLiveActivity {
     static func percent(_ p: Double) -> String {
         "\(Int((min(max(p, 0), 1) * 100).rounded()))%"
-    }
-
-    static func detail(_ s: DownloadActivityAttributes.ContentState) -> String {
-        if s.finished { return String(localized: "Toca para abrir T-Box") }
-        guard s.expected > 0 else { return String(localized: "Descargando en T-Box") }
-        let got = ByteCountFormatter.string(fromByteCount: s.received, countStyle: .file)
-        let total = ByteCountFormatter.string(fromByteCount: s.expected, countStyle: .file)
-        return "\(got) / \(total)"
     }
 }
 
@@ -80,25 +142,21 @@ struct LockScreenDownloadView: View {
 
     var body: some View {
         HStack(spacing: 14) {
-            Image(systemName: state.finished ? "checkmark.circle.fill" : "arrow.down.circle.fill")
-                .font(.largeTitle)
-                .foregroundStyle(.green)
+            StatusIcon(finished: state.finished).font(.largeTitle)
             VStack(alignment: .leading, spacing: 6) {
                 HStack {
                     Text(state.title)
                         .font(.headline)
                         .lineLimit(1)
                     Spacer()
-                    Text(DownloadLiveActivity.percent(state.progress))
+                    TrailingValue(state: state)
                         .font(.headline)
-                        .monospacedDigit()
+                        .frame(maxWidth: 76, alignment: .trailing)
                 }
-                ProgressView(value: state.progress)
-                    .tint(.green)
-                Text(DownloadLiveActivity.detail(state))
+                Bar(state: state)
+                DetailLine(state: state)
                     .font(.caption)
                     .foregroundStyle(.secondary)
-                    .monospacedDigit()
             }
         }
         .foregroundStyle(.white)

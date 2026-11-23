@@ -11,6 +11,16 @@
         }
       }
     },
+    "%@ · tiempo estimado": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%@ · estimated time"
+          }
+        }
+      }
+    },
     "%d al iPhone": {
       "localizations": {
         "en": {
