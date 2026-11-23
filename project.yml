@@ -7,7 +7,7 @@ options:
 settings:
   base:
     SWIFT_VERSION: "5.0"
-    MARKETING_VERSION: "0.3.3"
+    MARKETING_VERSION: "0.4.0"
     CURRENT_PROJECT_VERSION: "1"
     LOCALIZATION_PREFERS_STRING_CATALOGS: YES
     SWIFT_EMIT_LOC_STRINGS: YES
@@ -24,6 +24,7 @@ targets:
     dependencies:
       - package: ZIPFoundation
       - target: TBoxShare
+      - target: TBoxWidgets
     settings:
       base:
         PRODUCT_NAME: TBox
@@ -51,6 +52,24 @@ targets:
         PRODUCT_NAME: TBoxShare
         PRODUCT_BUNDLE_IDENTIFIER: io.github.maniac75.tbox.share
         INFOPLIST_FILE: TBoxShare/Info.plist
+        GENERATE_INFOPLIST_FILE: NO
+        TARGETED_DEVICE_FAMILY: "1,2"
+        APPLICATION_EXTENSION_API_ONLY: YES
+        CODE_SIGNING_ALLOWED: NO
+        CODE_SIGNING_REQUIRED: NO
+        CODE_SIGN_IDENTITY: ""
+  TBoxWidgets:
+    type: app-extension
+    platform: iOS
+    sources:
+      - TBoxWidgets
+      - path: TBox/DownloadActivity.swift
+      - path: TBox/Localizable.xcstrings
+    settings:
+      base:
+        PRODUCT_NAME: TBoxWidgets
+        PRODUCT_BUNDLE_IDENTIFIER: io.github.maniac75.tbox.widgets
+        INFOPLIST_FILE: TBoxWidgets/Info.plist
         GENERATE_INFOPLIST_FILE: NO
         TARGETED_DEVICE_FAMILY: "1,2"
         APPLICATION_EXTENSION_API_ONLY: YES

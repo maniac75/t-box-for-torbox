@@ -104,6 +104,14 @@ final class AppState: ObservableObject {
         UserDefaults.standard.set(Array(favorites), forKey: "favorites")
     }
 
+    /// Marca o desmarca varios como favoritos de una vez.
+    func setFavorite(_ list: [Torrent], _ on: Bool) {
+        for t in list {
+            if on { favorites.insert(favKey(t)) } else { favorites.remove(favKey(t)) }
+        }
+        UserDefaults.standard.set(Array(favorites), forKey: "favorites")
+    }
+
     func item(_ ref: ItemRef) -> Torrent? {
         items(ref.kind).first { $0.id == ref.id }
     }
@@ -197,6 +205,31 @@ final class AppState: ObservableObject {
             if t.kind == .torrent { torrents.removeAll { $0.id == t.id } }
             else { webDownloads.removeAll { $0.id == t.id } }
         } catch { errorMessage = error.localizedDescription }
+    }
+
+    /// Borra varios, de a uno (TorBox no tiene borrado en lote). Devuelve cuántos fallaron.
+    func deleteMany(_ list: [Torrent]) async -> Int {
+        var failed = 0
+        for t in list {
+            do {
+                try await api.control(t.kind, id: t.id, operation: "delete")
+                if t.kind == .torrent { torrents.removeAll { $0.id == t.id } }
+                else { webDownloads.removeAll { $0.id == t.id } }
+            } catch {
+                failed += 1
+                Diagnostics.log("BULK delete \(t.kind.rawValue)-\(t.id) failed: \(error.localizedDescription)")
+            }
+        }
+        return failed
+    }
+
+    /// Activa o quita AirLock en varios. Devuelve cuántos fallaron.
+    func airlockMany(_ list: [Torrent], on: Bool) async -> Int {
+        var failed = 0
+        for t in list where t.airlocked != on {
+            if await setAirlock(t, on: on) != nil { failed += 1 }
+        }
+        return failed
     }
 
     func rename(_ t: Torrent, to name: String) async -> String? {

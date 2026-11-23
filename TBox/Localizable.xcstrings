@@ -31,6 +31,36 @@
         }
       }
     },
+    "%d descargas": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%d downloads"
+          }
+        }
+      }
+    },
+    "%d descargas iniciadas": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%d downloads started"
+          }
+        }
+      }
+    },
+    "%d eliminados": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%d deleted"
+          }
+        }
+      }
+    },
     "%d en TorBox": {
       "localizations": {
         "en": {
@@ -47,6 +77,36 @@
           "stringUnit": {
             "state": "translated",
             "value": "%d links for TorBox"
+          }
+        }
+      }
+    },
+    "%d no se pudieron cambiar": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%d couldn't be changed"
+          }
+        }
+      }
+    },
+    "%d no se pudieron eliminar": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%d couldn't be deleted"
+          }
+        }
+      }
+    },
+    "%d seleccionados": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%d selected"
           }
         }
       }
@@ -271,12 +331,42 @@
         }
       }
     },
+    "AirLock activado": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "AirLock on"
+          }
+        }
+      }
+    },
+    "AirLock quitado": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "AirLock removed"
+          }
+        }
+      }
+    },
     "AirLock requiere un plan pagado de TorBox.": {
       "localizations": {
         "en": {
           "stringUnit": {
             "state": "translated",
             "value": "AirLock requires a paid TorBox plan."
+          }
+        }
+      }
+    },
+    "Al iPhone": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "To iPhone"
           }
         }
       }
@@ -407,6 +497,16 @@
           "stringUnit": {
             "state": "translated",
             "value": "Downloading to iPhone"
+          }
+        }
+      }
+    },
+    "Biblioteca": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Library"
           }
         }
       }
@@ -841,6 +941,16 @@
         }
       }
     },
+    "Descargando en T-Box": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Downloading in T-Box"
+          }
+        }
+      }
+    },
     "Descargar": {
       "localizations": {
         "en": {
@@ -877,6 +987,26 @@
           "stringUnit": {
             "state": "translated",
             "value": "Downloads"
+          }
+        }
+      }
+    },
+    "Descargas detenidas": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Downloads stopped"
+          }
+        }
+      }
+    },
+    "Descargas listas": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Downloads finished"
           }
         }
       }
@@ -1017,6 +1147,16 @@
           "stringUnit": {
             "state": "translated",
             "value": "Delete"
+          }
+        }
+      }
+    },
+    "Eliminar %d": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Delete %d"
           }
         }
       }
@@ -1341,6 +1481,26 @@
         }
       }
     },
+    "Favoritos": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Favorites"
+          }
+        }
+      }
+    },
+    "Filtrar y ordenar": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Filter and sort"
+          }
+        }
+      }
+    },
     "Filtro": {
       "localizations": {
         "en": {
@@ -1651,6 +1811,36 @@
         }
       }
     },
+    "Marcados como favoritos": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Added to favorites"
+          }
+        }
+      }
+    },
+    "Mostrando: %@ · Ver todos": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Showing: %@ · Show all"
+          }
+        }
+      }
+    },
+    "Mostrar": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Show"
+          }
+        }
+      }
+    },
     "Mostrar sitios +18 (%d)": {
       "localizations": {
         "en": {
@@ -1661,12 +1851,62 @@
         }
       }
     },
+    "Más antiguos": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Oldest"
+          }
+        }
+      }
+    },
+    "Más nuevos": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Newest"
+          }
+        }
+      }
+    },
+    "Nada por aquí": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Nothing here"
+          }
+        }
+      }
+    },
     "Nada todavía. Lo que descargues queda también en la app Archivos › En mi iPhone › T-Box.": {
       "localizations": {
         "en": {
           "stringUnit": {
             "state": "translated",
             "value": "Nothing yet. What you download also appears in the Files app › On My iPhone › T-Box."
+          }
+        }
+      }
+    },
+    "Ninguno": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "None"
+          }
+        }
+      }
+    },
+    "Ningún elemento coincide con este filtro.": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Nothing matches this filter."
           }
         }
       }
@@ -1861,6 +2101,16 @@
         }
       }
     },
+    "Ordenar": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Sort"
+          }
+        }
+      }
+    },
     "Para TorBox": {
       "localizations": {
         "en": {
@@ -2041,6 +2291,26 @@
         }
       }
     },
+    "Quitados de favoritos": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Removed from favorites"
+          }
+        }
+      }
+    },
+    "Quitar": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Remove"
+          }
+        }
+      }
+    },
     "Quitar AirLock": {
       "localizations": {
         "en": {
@@ -2161,12 +2431,32 @@
         }
       }
     },
+    "Se borran de tu cuenta de TorBox. Lo que ya bajaste al iPhone no se toca.": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "They're removed from your TorBox account. Anything already on your iPhone stays."
+          }
+        }
+      }
+    },
     "Seeds / peers": {
       "localizations": {
         "en": {
           "stringUnit": {
             "state": "translated",
             "value": "Seeds / peers"
+          }
+        }
+      }
+    },
+    "Seleccionar": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Select"
           }
         }
       }
@@ -2331,6 +2621,16 @@
         }
       }
     },
+    "Tamaño": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Size"
+          }
+        }
+      }
+    },
     "Tema": {
       "localizations": {
         "en": {
@@ -2381,6 +2681,16 @@
         }
       }
     },
+    "Tipo": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Type"
+          }
+        }
+      }
+    },
     "Toca + o abre un magnet desde Safari.": {
       "localizations": {
         "en": {
@@ -2391,12 +2701,32 @@
         }
       }
     },
+    "Toca + para agregar un magnet, un archivo .torrent o un enlace web.": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Tap + to add a magnet, a .torrent file or a web link."
+          }
+        }
+      }
+    },
     "Toca + y pega un enlace de YouTube, Instagram, X, Mega u otro sitio.": {
       "localizations": {
         "en": {
           "stringUnit": {
             "state": "translated",
             "value": "Tap + and paste a link from YouTube, Instagram, X, Mega or another site."
+          }
+        }
+      }
+    },
+    "Toca para abrir T-Box": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Tap to open T-Box"
           }
         }
       }
@@ -2417,6 +2747,16 @@
           "stringUnit": {
             "state": "translated",
             "value": "Tapping a magnet in Safari opens the app. To send links from Instagram, YouTube or Safari, create a Shortcut that opens tbox://add?url=[shared URL] and enable it in the Share sheet."
+          }
+        }
+      }
+    },
+    "Todo": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "All"
           }
         }
       }
@@ -2507,6 +2847,16 @@
           "stringUnit": {
             "state": "translated",
             "value": "Torrents"
+          }
+        }
+      }
+    },
+    "Tu biblioteca está vacía": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Your library is empty"
           }
         }
       }
@@ -2717,6 +3067,16 @@
           "stringUnit": {
             "state": "translated",
             "value": "Copy your API key?"
+          }
+        }
+      }
+    },
+    "¿Eliminar %d de TorBox?": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Delete %d from TorBox?"
           }
         }
       }

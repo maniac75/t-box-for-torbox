@@ -9,6 +9,7 @@ final class AppDelegate: NSObject, UIApplicationDelegate, UNUserNotificationCent
         _ = DownloadManager.shared
         UNUserNotificationCenter.current().delegate = self
         BackgroundCheck.register()
+        Task { @MainActor in LiveDownloads.shared.start() }
         return true
     }
 
@@ -51,12 +52,8 @@ struct RootView: View {
         Group {
             if state.isLoggedIn {
                 TabView {
-                    TorrentListView(kind: .torrent)
-                        .withActivityBar()
-                        .tabItem { Label("Torrents", systemImage: "tray.full") }
-                    TorrentListView(kind: .web)
-                        .withActivityBar()
-                        .tabItem { Label("Web", systemImage: "link") }
+                    LibraryView()
+                        .tabItem { Label("Biblioteca", systemImage: "books.vertical") }
                     DownloadsView()
                         .withActivityBar()
                         .tabItem { Label("En el iPhone", systemImage: "arrow.down.circle") }
