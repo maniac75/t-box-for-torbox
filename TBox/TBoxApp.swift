@@ -46,6 +46,8 @@ struct RootView: View {
     @Environment(\.scenePhase) private var scenePhase
     @AppStorage("support.completed") private var completedDownloads = 0
     @AppStorage("support.asked") private var supportAsked = false
+    @AppStorage("share.asked") private var shareAsked = false
+    @AppStorage("welcome.seen") private var welcomeSeen = ""
     @ObservedObject private var updates = UpdateChecker.shared
 
     var body: some View {
@@ -65,7 +67,13 @@ struct RootView: View {
                 .sheet(isPresented: $state.showAdd) {
                     AddView(initialText: state.incomingText, initialFile: state.incomingTorrentFile)
                 }
-                .sheet(isPresented: Binding(get: { completedDownloads >= 10 && !supportAsked && !state.showAdd },
+                // Una tarjeta a la vez: compartir tras la 3.ª descarga, apoyar tras la 10.ª.
+                .sheet(isPresented: Binding(get: { completedDownloads >= 3 && !shareAsked && !state.showAdd },
+                                            set: { if !$0 { shareAsked = true } })) {
+                    ShareCard { shareAsked = true }
+                        .presentationDetents([.height(380)])
+                }
+                .sheet(isPresented: Binding(get: { completedDownloads >= 10 && shareAsked && !supportAsked && !state.showAdd },
                                             set: { if !$0 { supportAsked = true } })) {
                     SupportCard { supportAsked = true }
                         .presentationDetents([.height(330)])
@@ -76,6 +84,10 @@ struct RootView: View {
             }
         }
         .overlay(alignment: .top) { ToastView().animation(.spring, value: Toaster.shared.current) }
+        .fullScreenCover(isPresented: Binding(get: { welcomeSeen != WelcomeView.edition },
+                                              set: { if !$0 { welcomeSeen = WelcomeView.edition } })) {
+            WelcomeView { welcomeSeen = WelcomeView.edition }
+        }
         .tint(.green)
         .onChange(of: scenePhase) { _, phase in
             if phase == .active, state.isLoggedIn {

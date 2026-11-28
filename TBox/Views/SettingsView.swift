@@ -178,6 +178,14 @@ struct SettingsView: View {
                 }
 
                 Section {
+                    NavigationLink {
+                        AboutView()
+                    } label: {
+                        Label("Acerca de T-Box", systemImage: "info.circle")
+                    }
+                    ShareLink(item: AppConfig.repoURL, message: Text(AppConfig.shareMessage)) {
+                        Label("Compartir T-Box", systemImage: "square.and.arrow.up")
+                    }
                     Link(destination: AppConfig.repoURL) {
                         Label("Código fuente en GitHub", systemImage: "chevron.left.forwardslash.chevron.right")
                     }

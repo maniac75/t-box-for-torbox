@@ -231,6 +231,26 @@
         }
       }
     },
+    "Acerca de": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "About"
+          }
+        }
+      }
+    },
+    "Acerca de T-Box": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "About T-Box"
+          }
+        }
+      }
+    },
     "Activar": {
       "localizations": {
         "en": {
@@ -331,6 +351,16 @@
         }
       }
     },
+    "Ahora no": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Not now"
+          }
+        }
+      }
+    },
     "AirLock": {
       "localizations": {
         "en": {
@@ -387,6 +417,16 @@
           "stringUnit": {
             "state": "translated",
             "value": "Support T-Box"
+          }
+        }
+      }
+    },
+    "App gratuita y de código abierto. No oficial: no está afiliada a TorBox.": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Free and open source. Unofficial: not affiliated with TorBox."
           }
         }
       }
@@ -487,6 +527,36 @@
           "stringUnit": {
             "state": "translated",
             "value": "Instant alerts (experimental)"
+          }
+        }
+      }
+    },
+    "Ayuda a difundirla": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Help spread the word"
+          }
+        }
+      }
+    },
+    "Ayúdanos a que más gente la conozca. Toma un segundo y hace una gran diferencia.": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Help more people find it. It takes a second and makes a big difference."
+          }
+        }
+      }
+    },
+    "Baja tus archivos de TorBox al iPhone en varias partes a la vez. Sigue bajando aunque cierres la app.": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Download your TorBox files to your iPhone in several parts at once. Keeps going even if you close the app."
           }
         }
       }
@@ -611,6 +681,16 @@
         }
       }
     },
+    "Cargando tu biblioteca…": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Loading your library…"
+          }
+        }
+      }
+    },
     "Carpeta": {
       "localizations": {
         "en": {
@@ -627,6 +707,16 @@
           "stringUnit": {
             "state": "translated",
             "value": "Folder · opens in Files"
+          }
+        }
+      }
+    },
+    "Casi listo…": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Almost there…"
           }
         }
       }
@@ -677,6 +767,16 @@
           "stringUnit": {
             "state": "translated",
             "value": "Share"
+          }
+        }
+      }
+    },
+    "Compartir T-Box": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Share T-Box"
           }
         }
       }
@@ -737,6 +837,16 @@
           "stringUnit": {
             "state": "translated",
             "value": "With “only if already cached”, TorBox won't add anything it would have to download from scratch."
+          }
+        }
+      }
+    },
+    "Conectando con TorBox…": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Connecting to TorBox…"
           }
         }
       }
@@ -821,6 +931,16 @@
         }
       }
     },
+    "Creado por": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Made by"
+          }
+        }
+      }
+    },
     "Crear cuenta en TorBox": {
       "localizations": {
         "en": {
@@ -897,6 +1017,16 @@
           "stringUnit": {
             "state": "translated",
             "value": "Source code on GitHub"
+          }
+        }
+      }
+    },
+    "Dar una estrella en GitHub": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Star it on GitHub"
           }
         }
       }
@@ -1007,6 +1137,16 @@
           "stringUnit": {
             "state": "translated",
             "value": "Downloads"
+          }
+        }
+      }
+    },
+    "Descargas 10 veces más rápidas": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Downloads up to 10x faster"
           }
         }
       }
@@ -1141,6 +1281,16 @@
         }
       }
     },
+    "El avance, la velocidad y el tiempo restante en la Dynamic Island y en la pantalla de bloqueo.": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Progress, speed and time left in the Dynamic Island and on the Lock Screen."
+          }
+        }
+      }
+    },
     "El código expiró. Pide uno nuevo.": {
       "localizations": {
         "en": {
@@ -1207,6 +1357,16 @@
           "stringUnit": {
             "state": "translated",
             "value": "Delete stalled (%d)"
+          }
+        }
+      }
+    },
+    "Empezar": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Get started"
           }
         }
       }
@@ -1717,6 +1877,16 @@
           "stringUnit": {
             "state": "translated",
             "value": "The password is for protected links (for example, some Mega links)."
+          }
+        }
+      }
+    },
+    "Las estrellas ayudan a que más gente encuentre T-Box en GitHub.": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Stars help more people find T-Box on GitHub."
           }
         }
       }
@@ -2451,6 +2621,16 @@
         }
       }
     },
+    "Saltar": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Skip"
+          }
+        }
+      }
+    },
     "Se abre GitHub (necesitas una cuenta gratuita). Al reportar un error, la versión de la app y de iOS ya van completadas. Ayuda mucho adjuntar el diagnóstico de más abajo: la API key va censurada.": {
       "localizations": {
         "en": {
@@ -2507,6 +2687,16 @@
           "stringUnit": {
             "state": "translated",
             "value": "If enabled, TorBox won't add it when it would have to download it from scratch."
+          }
+        }
+      }
+    },
+    "Siguiente": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Next"
           }
         }
       }
@@ -2651,6 +2841,16 @@
         }
       }
     },
+    "T-Box: una app gratis y de código abierto para usar TorBox en el iPhone.": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "T-Box: a free, open-source app to use TorBox on your iPhone."
+          }
+        }
+      }
+    },
     "Tamaño": {
       "localizations": {
         "en": {
@@ -2761,6 +2961,16 @@
         }
       }
     },
+    "Toca para continuar": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Tap to continue"
+          }
+        }
+      }
+    },
     "Toca una descarga fallida para reintentarla.": {
       "localizations": {
         "en": {
@@ -2787,6 +2997,26 @@
           "stringUnit": {
             "state": "translated",
             "value": "All"
+          }
+        }
+      }
+    },
+    "Todo a la vista": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Everything at a glance"
+          }
+        }
+      }
+    },
+    "Todo listo": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "All set"
           }
         }
       }
@@ -2861,6 +3091,16 @@
         }
       }
     },
+    "TorBox, directo en tu iPhone": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "TorBox, right on your iPhone"
+          }
+        }
+      }
+    },
     "Torrent": {
       "localizations": {
         "en": {
@@ -2881,12 +3121,32 @@
         }
       }
     },
+    "Torrents y descargas web juntos, con filtros, favoritos y selección múltiple.": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Torrents and web downloads together, with filters, favorites and multi-select."
+          }
+        }
+      }
+    },
     "Tu biblioteca está vacía": {
       "localizations": {
         "en": {
           "stringUnit": {
             "state": "translated",
             "value": "Your library is empty"
+          }
+        }
+      }
+    },
+    "Tu biblioteca, ordenada": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Your library, organized"
           }
         }
       }
@@ -2987,6 +3247,16 @@
           "stringUnit": {
             "state": "translated",
             "value": "Checking"
+          }
+        }
+      }
+    },
+    "Versión %@": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Version %@"
           }
         }
       }
@@ -3147,6 +3417,16 @@
           "stringUnit": {
             "state": "translated",
             "value": "Is T-Box working for you?"
+          }
+        }
+      }
+    },
+    "¿Te sirve T-Box?": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Enjoying T-Box?"
           }
         }
       }

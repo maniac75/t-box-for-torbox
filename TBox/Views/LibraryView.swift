@@ -147,6 +147,13 @@ struct LibraryView: View {
             .listStyle(.insetGrouped)
             .environment(\.editMode, .constant(selecting ? .active : .inactive))
             .overlay { emptyState }
+            .overlay {
+                if !state.didLoadOnce && source.isEmpty && queue.isEmpty {
+                    LibraryLoadingView()
+                        .transition(.opacity)
+                }
+            }
+            .animation(.easeOut(duration: 0.35), value: state.didLoadOnce)
             .overlay(alignment: .top) {
                 if let notice {
                     Text(notice)

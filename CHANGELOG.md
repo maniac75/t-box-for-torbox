@@ -2,6 +2,14 @@
 
 Format: [Keep a Changelog](https://keepachangelog.com/en/1.1.0/). Versions before 0.3.0 are pre-releases.
 
+## [0.4.1] - Unreleased
+
+### Added
+- Animated welcome the first time you open the app.
+- Animated loading screen while your library loads.
+- About screen in Account, with sharing and GitHub links.
+- A one-time card asking to share T-Box or star it on GitHub.
+
 ## [0.4.0] - 2026-11-23
 
 ### Added

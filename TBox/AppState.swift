@@ -10,6 +10,8 @@ final class AppState: ObservableObject {
     @Published var webDownloads: [Torrent] = []
     @Published var user: UserInfo?
     @Published var isLoading = false
+    /// Pasa a true cuando termina el primer refresco: hasta entonces se muestra la pantalla de carga animada.
+    @Published var didLoadOnce = false
     @Published var errorMessage: String?
     @Published var queuedTorrents: [QueuedItem] = []
     @Published var queuedWeb: [QueuedItem] = []
@@ -137,7 +139,7 @@ final class AppState: ObservableObject {
 
     private func performRefresh() async {
         isLoading = true
-        defer { isLoading = false }
+        defer { isLoading = false; didLoadOnce = true }
         var errors: [String] = []
         var transientOnly = true
         var loaded: Set<ItemKind> = []

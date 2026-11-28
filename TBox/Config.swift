@@ -28,6 +28,8 @@ enum AppConfig {
     static let featureRequestURL = URL(string: "https://github.com/maniac75/t-box-for-torbox/issues/new?template=feature_request.yml")!
     static let discussionsURL = URL(string: "https://github.com/maniac75/t-box-for-torbox/discussions")!
     static let repoURL = URL(string: "https://github.com/maniac75/t-box-for-torbox")!
+    /// Texto que acompaña al enlace al compartir T-Box.
+    static var shareMessage: String { L("T-Box: una app gratis y de código abierto para usar TorBox en el iPhone.") }
     static var privacyURL: URL {
         let es = Locale.current.language.languageCode?.identifier == "es"
         return URL(string: "https://github.com/maniac75/t-box-for-torbox/blob/main/\(es ? "PRIVACY.es.md" : "PRIVACY.md")")!
