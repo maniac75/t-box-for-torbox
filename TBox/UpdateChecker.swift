@@ -1,4 +1,5 @@
 import Foundation
+import UIKit
 
 /// Revisa en GitHub si hay una versión más nueva de T-Box.
 /// Una consulta pública a api.github.com, sin cuenta ni datos personales; como máximo una vez cada 12 horas.
@@ -6,6 +7,14 @@ final class UpdateChecker: ObservableObject {
     static let shared = UpdateChecker()
 
     @Published private(set) var latestVersion: String?
+    /// Enlace que abre Feather y le pasa la ipa de la versión nueva (queda en "Imported", lista para firmar).
+    /// Nil si no hay versión nueva o Feather no está instalado.
+    var featherInstallURL: URL? {
+        guard updateAvailable, let v = latestVersion,
+              let feather = URL(string: "feather://"), UIApplication.shared.canOpenURL(feather) else { return nil }
+        return URL(string: "feather://install/https://github.com/maniac75/t-box-for-torbox/releases/download/v\(v)/T-Box-\(v).ipa")
+    }
+
     @Published private(set) var releaseURL = URL(string: "https://github.com/maniac75/t-box-for-torbox/releases/latest")!
 
     var current: String {

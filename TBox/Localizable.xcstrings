@@ -281,6 +281,16 @@
         }
       }
     },
+    "Actualizar a T-Box %@ en Feather": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Update to T-Box %@ in Feather"
+          }
+        }
+      }
+    },
     "Agregado": {
       "localizations": {
         "en": {
@@ -2911,6 +2921,16 @@
         }
       }
     },
+    "Tienes la %@. Feather baja la versión nueva y la deja en Biblioteca › Importadas: tócala y firma como siempre.": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "You have %@. Feather downloads the new version to Library › Imported: tap it and sign as usual."
+          }
+        }
+      }
+    },
     "Tipo": {
       "localizations": {
         "en": {
@@ -3227,6 +3247,16 @@
           "stringUnit": {
             "state": "translated",
             "value": "See plans with referral code"
+          }
+        }
+      }
+    },
+    "Ver qué hay de nuevo": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "See what's new"
           }
         }
       }

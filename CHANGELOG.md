@@ -9,6 +9,7 @@ Format: [Keep a Changelog](https://keepachangelog.com/en/1.1.0/). Versions befor
 - Animated loading screen while your library loads.
 - About screen in Account, with sharing and GitHub links.
 - A one-time card asking to share T-Box or star it on GitHub.
+- Update in Feather with one tap from the update notice in Account.
 
 ## [0.4.0] - 2026-11-23
 

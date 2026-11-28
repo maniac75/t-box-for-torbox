@@ -23,12 +23,26 @@ struct SettingsView: View {
             Form {
                 if updates.updateAvailable, let v = updates.latestVersion {
                     Section {
-                        Link(destination: updates.releaseURL) {
-                            Label(String(format: L("T-Box %@ disponible"), v), systemImage: "arrow.down.app.fill")
-                                .font(.headline)
+                        if let feather = updates.featherInstallURL {
+                            Link(destination: feather) {
+                                Label(String(format: L("Actualizar a T-Box %@ en Feather"), v), systemImage: "arrow.down.app.fill")
+                                    .font(.headline)
+                            }
+                            Link(destination: updates.releaseURL) {
+                                Label("Ver qué hay de nuevo", systemImage: "doc.text")
+                            }
+                        } else {
+                            Link(destination: updates.releaseURL) {
+                                Label(String(format: L("T-Box %@ disponible"), v), systemImage: "arrow.down.app.fill")
+                                    .font(.headline)
+                            }
                         }
                     } footer: {
-                        Text(String(format: L("Tienes la %@. Descarga la nueva y fírmala como siempre, o actualízala desde la fuente de T-Box en Feather."), updates.current))
+                        if updates.featherInstallURL != nil {
+                            Text(String(format: L("Tienes la %@. Feather baja la versión nueva y la deja en Biblioteca › Importadas: tócala y firma como siempre."), updates.current))
+                        } else {
+                            Text(String(format: L("Tienes la %@. Descarga la nueva y fírmala como siempre, o actualízala desde la fuente de T-Box en Feather."), updates.current))
+                        }
                     }
                 }
 
