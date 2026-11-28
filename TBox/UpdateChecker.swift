@@ -32,16 +32,18 @@ final class UpdateChecker: ObservableObject {
     }
 
     /// `minInterval`: segundos mínimos desde la última consulta.
-    func check(minInterval: TimeInterval = 3600) async {
+    /// Devuelve false si no se pudo consultar (o si se omitió por el intervalo).
+    @discardableResult
+    func check(minInterval: TimeInterval = 3600) async -> Bool {
         let last = UserDefaults.standard.double(forKey: "update.checkedAt")
-        if Date().timeIntervalSince1970 - last < minInterval { return }
+        if Date().timeIntervalSince1970 - last < minInterval { return false }
         var req = URLRequest(url: URL(string: "https://api.github.com/repos/maniac75/t-box-for-torbox/releases/latest")!)
         req.setValue("application/vnd.github+json", forHTTPHeaderField: "Accept")
         req.timeoutInterval = 15
         guard let (data, resp) = try? await URLSession.shared.data(for: req),
               (resp as? HTTPURLResponse)?.statusCode == 200,
               let obj = try? JSONSerialization.jsonObject(with: data) as? [String: Any],
-              let tag = obj["tag_name"] as? String else { return }
+              let tag = obj["tag_name"] as? String else { return false }
         let version = tag.hasPrefix("v") ? String(tag.dropFirst()) : tag
         let page = (obj["html_url"] as? String).flatMap(URL.init(string:))
         await MainActor.run {
@@ -50,6 +52,7 @@ final class UpdateChecker: ObservableObject {
         }
         UserDefaults.standard.set(version, forKey: "update.latest")
         UserDefaults.standard.set(Date().timeIntervalSince1970, forKey: "update.checkedAt")
+        return true
     }
 
     /// Compara versiones numéricas ("0.3.10" > "0.3.9").

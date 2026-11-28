@@ -1761,6 +1761,16 @@
         }
       }
     },
+    "Está arriba, en Cuenta.": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "It's at the top of Account."
+          }
+        }
+      }
+    },
     "Está en torbox.app › Settings › API Key. Se guarda en el llavero del iPhone.": {
       "localizations": {
         "en": {
@@ -2331,6 +2341,16 @@
         }
       }
     },
+    "No se pudo revisar": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Couldn't check"
+          }
+        }
+      }
+    },
     "No, gracias": {
       "localizations": {
         "en": {
@@ -2801,6 +2821,26 @@
         }
       }
     },
+    "Revisa tu conexión e inténtalo de nuevo.": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Check your connection and try again."
+          }
+        }
+      }
+    },
+    "Revisar si hay actualización": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Check for updates"
+          }
+        }
+      }
+    },
     "Saltar": {
       "localizations": {
         "en": {
@@ -3107,6 +3147,16 @@
           "stringUnit": {
             "state": "translated",
             "value": "You have %@. Feather downloads the new version to Library › Imported: tap it and sign as usual."
+          }
+        }
+      }
+    },
+    "Tienes la última versión": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "You're up to date"
           }
         }
       }

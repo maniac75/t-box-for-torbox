@@ -19,6 +19,7 @@ struct SettingsView: View {
     @State private var notificationsOn = Notifier.enabled
     @State private var ntfyTopic = AppSettings.ntfyTopic
     @State private var confirmNtfy = false
+    @State private var checkingUpdate = false
 
     var body: some View {
         NavigationStack {
@@ -202,6 +203,16 @@ struct SettingsView: View {
                     } label: {
                         Label("Acerca de T-Box", systemImage: "info.circle")
                     }
+                    Button {
+                        Task { await checkForUpdate() }
+                    } label: {
+                        HStack {
+                            Label("Revisar si hay actualización", systemImage: "arrow.triangle.2.circlepath")
+                            Spacer()
+                            if checkingUpdate { ProgressView() }
+                        }
+                    }
+                    .disabled(checkingUpdate)
                     ShareLink(item: AppConfig.repoURL, message: Text(AppConfig.shareMessage)) {
                         Label("Compartir T-Box", systemImage: "square.and.arrow.up")
                     }
@@ -253,6 +264,19 @@ struct SettingsView: View {
                                  set: { shareURL = $0?.url })) { item in
                 ShareSheet(items: [item.url])
             }
+        }
+    }
+
+    private func checkForUpdate() async {
+        checkingUpdate = true
+        let ok = await updates.check(minInterval: 0)
+        checkingUpdate = false
+        if !ok {
+            Toaster.shared.show(L("No se pudo revisar"), detail: L("Revisa tu conexión e inténtalo de nuevo."))
+        } else if updates.updateAvailable, let v = updates.latestVersion {
+            Toaster.shared.show(String(format: L("T-Box %@ disponible"), v), detail: L("Está arriba, en Cuenta."))
+        } else {
+            Toaster.shared.show(L("Tienes la última versión"), detail: updates.current)
         }
     }
 

@@ -7,6 +7,9 @@ Format: [Keep a Changelog](https://keepachangelog.com/en/1.1.0/). Versions befor
 ### Changed
 - The app checks for updates every hour, and again when you open Account, instead of every 12 hours.
 
+### Added
+- "Check for updates" button in Account.
+
 ## [0.5.0] - 2026-11-28
 
 ### Added
