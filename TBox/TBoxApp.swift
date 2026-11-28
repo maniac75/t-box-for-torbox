@@ -48,6 +48,12 @@ struct RootView: View {
     @AppStorage("support.asked") private var supportAsked = false
     @AppStorage("share.asked") private var shareAsked = false
     @AppStorage("welcome.seen") private var welcomeSeen = ""
+    /// Descargas completadas al abrir la app: las tarjetas solo aparecen después de terminar una descarga
+    /// en esta sesión, nunca al abrir (ni encima de la bienvenida).
+    @State private var completedAtLaunch = UserDefaults.standard.integer(forKey: "support.completed")
+    private var cardsAllowed: Bool {
+        welcomeSeen == WelcomeView.edition && !state.showAdd && completedDownloads > completedAtLaunch
+    }
     @ObservedObject private var updates = UpdateChecker.shared
 
     var body: some View {
@@ -68,12 +74,12 @@ struct RootView: View {
                     AddView(initialText: state.incomingText, initialFile: state.incomingTorrentFile)
                 }
                 // Una tarjeta a la vez: compartir tras la 3.ª descarga, apoyar tras la 10.ª.
-                .sheet(isPresented: Binding(get: { completedDownloads >= 3 && !shareAsked && !state.showAdd },
+                .sheet(isPresented: Binding(get: { cardsAllowed && completedDownloads >= 3 && !shareAsked },
                                             set: { if !$0 { shareAsked = true } })) {
                     ShareCard { shareAsked = true }
                         .presentationDetents([.height(380)])
                 }
-                .sheet(isPresented: Binding(get: { completedDownloads >= 10 && shareAsked && !supportAsked && !state.showAdd },
+                .sheet(isPresented: Binding(get: { cardsAllowed && completedDownloads >= 10 && shareAsked && !supportAsked },
                                             set: { if !$0 { supportAsked = true } })) {
                     SupportCard { supportAsked = true }
                         .presentationDetents([.height(330)])
