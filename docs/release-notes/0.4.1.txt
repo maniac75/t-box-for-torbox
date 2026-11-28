@@ -1,0 +1,6 @@
+• Pause and resume downloads to iPhone
+• Download on Wi-Fi only
+• Clean titles in the library
+• Update in Feather with one tap
+• Animated welcome and loading screen
+• New About screen

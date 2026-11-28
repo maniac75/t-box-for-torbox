@@ -2,7 +2,7 @@
 
 Format: [Keep a Changelog](https://keepachangelog.com/en/1.1.0/). Versions before 0.3.0 are pre-releases.
 
-## [0.4.1] - Unreleased
+## [0.4.1] - 2026-11-28
 
 ### Added
 - Animated welcome the first time you open the app.
