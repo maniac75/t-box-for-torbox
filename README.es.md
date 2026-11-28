@@ -60,6 +60,7 @@ TorBox es un servicio en la nube que descarga torrents, archivos de sitios como 
 
 ### Compartir
 - **T-Box en el menú Compartir** de cualquier app: envía magnets y enlaces a TorBox desde donde estés. [Detalles](#compartir-desde-otras-apps)
+- **Extensión para Safari**: aparece un botón de T-Box junto a magnets, enlaces `.torrent` y archivos de sitios compatibles con TorBox. Con un toque los mandas a T-Box. Se activa en Ajustes › Apps › Safari › Extensiones.
 
 ### Avisos
 - Aviso dentro de la app cuando algo termina.

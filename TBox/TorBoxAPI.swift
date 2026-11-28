@@ -167,6 +167,23 @@ final class TorBoxAPI: @unchecked Sendable {
         return r
     }
 
+    /// Enlace http(s) a un archivo .torrent: se baja aquí (TorBox no acepta la URL del .torrent)
+    /// y se sube como archivo.
+    func addTorrentURL(_ link: String, onlyIfCached: Bool) async throws -> CreateResult {
+        guard let url = URL(string: link) else { throw URLError(.badURL) }
+        var req = URLRequest(url: url)
+        req.timeoutInterval = 30
+        let (data, resp) = try await URLSession.shared.data(for: req)
+        let status = (resp as? HTTPURLResponse)?.statusCode ?? 200
+        // Un .torrent real empieza con "d" (diccionario bencode) y pesa poco.
+        guard (200..<300).contains(status), data.count < 20 * 1024 * 1024, data.first == UInt8(ascii: "d") else {
+            throw NSError(domain: "T-Box", code: 2,
+                          userInfo: [NSLocalizedDescriptionKey: L("Ese enlace no entregó un archivo .torrent válido.")])
+        }
+        let name = url.lastPathComponent.isEmpty ? "file.torrent" : url.lastPathComponent
+        return try await addTorrentFile(data, filename: name, onlyIfCached: onlyIfCached)
+    }
+
     private func create(_ path: String, form: MultipartForm, idKeys: [String]) async throws -> CreateResult {
         let req = try makeRequest(path, method: "POST", body: form.finalize(), contentType: form.contentType)
         return try await createResult(from: send(req), idKeys: idKeys)

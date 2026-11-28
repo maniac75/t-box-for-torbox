@@ -13,6 +13,7 @@ T-Box is an unofficial, open-source TorBox client for iPhone. It has **no server
 | Your TorBox items (names, sizes, progress) and your referral code | To show your library and your referral link | Memory only | Read from TorBox; not sent anywhere else |
 | Files you download | Because you asked to download them | Your iPhone: Files › On My iPhone › T-Box, or Photos if you choose | Nobody, unless you share them |
 | App settings (notifications on/off, unzip after download, your ntfy topic if enabled), the IDs of items still in progress, and a count of completed downloads | To remember your preferences, notify you when an item is ready, and show the support card once | On your iPhone (app settings) | Nobody |
+| Pages you visit in Safari, **only if you turn on the T-Box Safari extension** | To find magnets, .torrent links and files from TorBox-supported sites on the page | Read on your iPhone while the page is open; the extension only stores which sites you hid the button on and the list of supported sites | Nobody. Links reach T-Box only when **you** tap the T-Box button. The extension downloads TorBox's public list of supported sites from `api.torbox.app` once a day, with no API key or personal data |
 | Diagnostics log (network errors, request paths, app version, iOS version, device model) | To help fix bugs | On your iPhone. **Your API key is redacted** | Nobody, unless **you** export it and send it (e.g. in a GitHub issue) |
 
 T-Box **does not** collect or store passwords, payment data, contacts, location, or any data from other apps.

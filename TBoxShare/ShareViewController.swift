@@ -98,6 +98,8 @@ final class ShareModel: ObservableObject {
                 let r: CreateResult
                 if rows[i].link.kind == .magnet {
                     r = try await api.addMagnet(rows[i].link.value, onlyIfCached: onlyIfCached)
+                } else if rows[i].link.kind == .torrentURL {
+                    r = try await api.addTorrentURL(rows[i].link.value, onlyIfCached: onlyIfCached)
                 } else {
                     r = try await api.addWebDownload(link: rows[i].link.value, password: nil, name: nil,
                                                      onlyIfCached: onlyIfCached)
@@ -147,7 +149,7 @@ struct ShareView: View {
                         ForEach(model.rows) { row in
                             VStack(alignment: .leading, spacing: 4) {
                                 HStack {
-                                    Image(systemName: row.link.kind == .magnet ? "link.badge.plus" : "globe")
+                                    Image(systemName: row.link.isTorrent ? "link.badge.plus" : "globe")
                                         .foregroundStyle(.green)
                                     Text(row.link.displayName).font(.subheadline.weight(.semibold)).lineLimit(2)
                                     Spacer()

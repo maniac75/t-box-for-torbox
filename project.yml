@@ -25,6 +25,7 @@ targets:
       - package: ZIPFoundation
       - target: TBoxShare
       - target: TBoxWidgets
+      - target: TBoxSafari
     settings:
       base:
         PRODUCT_NAME: TBox
@@ -70,6 +71,24 @@ targets:
         PRODUCT_NAME: TBoxWidgets
         PRODUCT_BUNDLE_IDENTIFIER: io.github.maniac75.tbox.widgets
         INFOPLIST_FILE: TBoxWidgets/Info.plist
+        GENERATE_INFOPLIST_FILE: NO
+        TARGETED_DEVICE_FAMILY: "1,2"
+        APPLICATION_EXTENSION_API_ONLY: YES
+        CODE_SIGNING_ALLOWED: NO
+        CODE_SIGNING_REQUIRED: NO
+        CODE_SIGN_IDENTITY: ""
+  TBoxSafari:
+    type: app-extension
+    platform: iOS
+    sources:
+      - path: TBoxSafari/SafariWebExtensionHandler.swift
+      - path: TBoxSafari/Resources
+        buildPhase: resources
+    settings:
+      base:
+        PRODUCT_NAME: TBoxSafari
+        PRODUCT_BUNDLE_IDENTIFIER: io.github.maniac75.tbox.safari
+        INFOPLIST_FILE: TBoxSafari/Info.plist
         GENERATE_INFOPLIST_FILE: NO
         TARGETED_DEVICE_FAMILY: "1,2"
         APPLICATION_EXTENSION_API_ONLY: YES

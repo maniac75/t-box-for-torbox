@@ -65,6 +65,7 @@ TorBox is a cloud service that downloads torrents, files from hosts like Mega or
 
 ### Share
 - **T-Box in the Share sheet** of any app: send magnets and links to TorBox from wherever you are. [Details](#share-from-other-apps)
+- **Safari extension**: a T-Box button appears next to magnets, `.torrent` links and files from TorBox-supported sites. One tap sends them to T-Box. Turn it on in Settings › Apps › Safari › Extensions.
 
 ### Notifications
 - In-app alert when something finishes.

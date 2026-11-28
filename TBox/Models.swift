@@ -446,12 +446,15 @@ enum MediaKind {
 
 // MARK: - Interpretar lo que el usuario pega
 
-enum AddKind: String { case magnet, web }
+enum AddKind: String { case magnet, torrentURL, web }
 
 struct ParsedLink: Hashable {
     let kind: AddKind
     let value: String      // lo que se envía a TorBox (ya normalizado)
     let original: String   // lo que pegó el usuario
+
+    /// Va a Torrents (magnet o enlace a un .torrent); el resto va a Web.
+    var isTorrent: Bool { kind != .web }
 
     var displayName: String {
         if kind == .magnet {
@@ -460,6 +463,9 @@ struct ParsedLink: Hashable {
                 return dn.replacingOccurrences(of: "+", with: " ")
             }
             return "magnet"
+        }
+        if kind == .torrentURL, let name = URL(string: value)?.lastPathComponent, !name.isEmpty {
+            return name.removingPercentEncoding ?? name
         }
         return URL(string: value)?.host ?? value
     }
@@ -487,7 +493,9 @@ enum LinkParser {
             if lower.hasPrefix("magnet:?") {
                 link = ParsedLink(kind: .magnet, value: token, original: token)
             } else if lower.hasPrefix("http://") || lower.hasPrefix("https://") {
-                link = ParsedLink(kind: .web, value: normalizeWeb(token), original: token)
+                let isTorrentFile = URL(string: token)?.pathExtension.lowercased() == "torrent"
+                link = isTorrentFile ? ParsedLink(kind: .torrentURL, value: token, original: token)
+                                     : ParsedLink(kind: .web, value: normalizeWeb(token), original: token)
             } else {
                 link = nil
             }

@@ -2,6 +2,12 @@
 
 Format: [Keep a Changelog](https://keepachangelog.com/en/1.1.0/). Versions before 0.3.0 are pre-releases.
 
+## [Unreleased]
+
+### Added
+- Safari extension: a T-Box button next to magnets, .torrent links and files from supported sites, and on supported file pages. Send one or pick several. Turn it on in Settings › Apps › Safari › Extensions.
+- Links to .torrent files now work in Add and Share.
+
 ## [0.4.1] - 2026-11-28
 
 ### Added

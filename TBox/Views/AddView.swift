@@ -196,12 +196,14 @@ struct AddView: View {
         var failedFiles: [URL] = []
 
         for link in links {
-            let entry = AddEntry(title: link.displayName, kind: link.kind == .magnet ? .torrent : .web)
+            let entry = AddEntry(title: link.displayName, kind: link.isTorrent ? .torrent : .web)
             entries.insert(entry, at: 0)
             do {
                 let r: CreateResult
                 if link.kind == .magnet {
                     r = try await state.api.addMagnet(link.value, onlyIfCached: onlyCached)
+                } else if link.kind == .torrentURL {
+                    r = try await state.api.addTorrentURL(link.value, onlyIfCached: onlyCached)
                 } else {
                     r = try await state.api.addWebDownload(link: link.value, password: password,
                                                            name: nil, onlyIfCached: onlyCached)
@@ -286,14 +288,14 @@ private struct DetectedRow: View {
 
     var body: some View {
         HStack(spacing: 12) {
-            Image(systemName: link.kind == .magnet ? "link.badge.plus" : "globe")
+            Image(systemName: link.isTorrent ? "link.badge.plus" : "globe")
                 .foregroundStyle(.green)
                 .frame(width: 24)
             VStack(alignment: .leading, spacing: 2) {
-                Text(link.kind == .magnet ? link.displayName : (hoster?.name ?? link.displayName))
+                Text(link.isTorrent ? link.displayName : (hoster?.name ?? link.displayName))
                     .font(.subheadline.weight(.semibold))
                     .lineLimit(2)
-                if link.kind == .magnet {
+                if link.isTorrent {
                     Text("Torrent").font(.caption).foregroundStyle(.secondary)
                 } else if link.value != link.original {
                     Text("Enlace corregido para TorBox").font(.caption).foregroundStyle(.secondary)
