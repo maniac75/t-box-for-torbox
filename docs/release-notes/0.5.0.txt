@@ -1,0 +1,3 @@
+• Safari extension: send links to T-Box from supported sites
+• Links to .torrent files now work
+• Short "What's new" screen after updating

@@ -131,6 +131,36 @@
         }
       }
     },
+    "1. Abre Ajustes › Apps › Safari › Extensiones (en iOS 17: Ajustes › Safari › Extensiones).": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "1. Open Settings › Apps › Safari › Extensions (on iOS 17: Settings › Safari › Extensions)."
+          }
+        }
+      }
+    },
+    "2. Toca T-Box y actívala.": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "2. Tap T-Box and turn it on."
+          }
+        }
+      }
+    },
+    "3. En «Todos los sitios web», elige «Permitir».": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "3. Under “All Websites”, choose “Allow”."
+          }
+        }
+      }
+    },
     "A Fotos": {
       "localizations": {
         "en": {
@@ -367,6 +397,16 @@
           "stringUnit": {
             "state": "translated",
             "value": "Not now"
+          }
+        }
+      }
+    },
+    "Ahora también puedes agregar enlaces directos a archivos .torrent.": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "You can now also add direct links to .torrent files."
           }
         }
       }
@@ -1031,6 +1071,16 @@
         }
       }
     },
+    "Cómo activarla": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "How to turn it on"
+          }
+        }
+      }
+    },
     "Dar una estrella en GitHub": {
       "localizations": {
         "en": {
@@ -1291,6 +1341,16 @@
         }
       }
     },
+    "Directo desde Safari": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Straight from Safari"
+          }
+        }
+      }
+    },
     "El archivo unido quedó incompleto. Reintenta la descarga.": {
       "localizations": {
         "en": {
@@ -1481,6 +1541,26 @@
         }
       }
     },
+    "En los sitios compatibles aparece un botón para enviar el enlace a T-Box, sin copiar ni pegar.": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "On supported sites a button appears to send the link to T-Box, no copy and paste needed."
+          }
+        }
+      }
+    },
+    "En los sitios compatibles aparece un botón para enviar el enlace a T-Box. Actívala en Ajustes › Apps › Safari › Extensiones.": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "On supported sites a button appears to send the link to T-Box. Turn it on in Settings › Apps › Safari › Extensions."
+          }
+        }
+      }
+    },
     "En pausa": {
       "localizations": {
         "en": {
@@ -1527,6 +1607,16 @@
           "stringUnit": {
             "state": "translated",
             "value": "Links"
+          }
+        }
+      }
+    },
+    "Entendido": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Got it"
           }
         }
       }
@@ -2267,6 +2357,16 @@
           "stringUnit": {
             "state": "translated",
             "value": "Notifications"
+          }
+        }
+      }
+    },
+    "Nuevo en %@": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "New in %@"
           }
         }
       }

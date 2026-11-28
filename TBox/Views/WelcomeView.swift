@@ -3,12 +3,19 @@ import SwiftUI
 /// Bienvenida animada. Se muestra la primera vez y tras una actualización grande (cambia `WelcomeView.edition`).
 struct WelcomeView: View {
     /// Subirlo hace que la bienvenida vuelva a aparecer una vez tras actualizar.
-    static let edition = "0.4.1"
+    static let edition = "0.5.0"
 
+    /// true: quien ya vio una bienvenida anterior ve solo la tarjeta de novedades.
+    var whatsNew = false
     let onDone: () -> Void
 
     @State private var step = 0
+    @State private var showSafariHelp = false
     @Environment(\.openURL) private var openURL
+
+    private static var appVersion: String {
+        Bundle.main.object(forInfoDictionaryKey: "CFBundleShortVersionString") as? String ?? ""
+    }
 
     private struct Card { let icon: String; let title: LocalizedStringKey; let body: LocalizedStringKey }
     private let cards: [Card] = [
@@ -20,17 +27,24 @@ struct WelcomeView: View {
              body: "El avance, la velocidad y el tiempo restante en la Dynamic Island y en la pantalla de bloqueo."),
         Card(icon: "books.vertical",
              title: "Tu biblioteca, ordenada",
-             body: "Torrents y descargas web juntos, con filtros, favoritos y selección múltiple.")
+             body: "Torrents y descargas web juntos, con filtros, favoritos y selección múltiple."),
+        Card(icon: "safari",
+             title: "Directo desde Safari",
+             body: "En los sitios compatibles aparece un botón para enviar el enlace a T-Box. Actívala en Ajustes › Apps › Safari › Extensiones.")
     ]
 
     var body: some View {
         ZStack {
             Brand.background
             MovingGrid()
-            switch step {
-            case 0: SplashStep { advance() }
-            case 1...cards.count: cardStep(cards[step - 1])
-            default: endStep
+            if whatsNew {
+                whatsNewStep
+            } else {
+                switch step {
+                case 0: SplashStep { advance() }
+                case 1...cards.count: cardStep(cards[step - 1])
+                default: endStep
+                }
             }
         }
         .foregroundStyle(.white)
@@ -108,10 +122,68 @@ struct WelcomeView: View {
             .overlay(RoundedRectangle(cornerRadius: 18).stroke(Brand.mint.opacity(0.25)))
             Spacer()
             primaryButton("Empezar") { onDone() }
+            versionFooter.padding(.top, 14)
         }
         .padding(.horizontal, 28)
         .padding(.vertical, 20)
         .transition(.opacity)
+    }
+
+    private var whatsNewStep: some View {
+        VStack(alignment: .leading, spacing: 0) {
+            BrandCube().frame(width: 34, height: 34).frame(minHeight: 44)
+            Spacer()
+            VStack(alignment: .leading, spacing: 22) {
+                Text("Nuevo en \(Self.appVersion)").font(.footnote.weight(.semibold)).textCase(.uppercase)
+                    .foregroundStyle(Brand.mint)
+                Text("Directo desde Safari").font(.system(size: 32, weight: .bold))
+                newRow(icon: "safari",
+                       text: "En los sitios compatibles aparece un botón para enviar el enlace a T-Box, sin copiar ni pegar.")
+                newRow(icon: "doc.badge.arrow.up",
+                       text: "Ahora también puedes agregar enlaces directos a archivos .torrent.")
+                Button { withAnimation { showSafariHelp.toggle() } } label: {
+                    Label("Cómo activarla", systemImage: showSafariHelp ? "chevron.up" : "questionmark.circle")
+                        .font(.subheadline.weight(.medium))
+                }
+                .foregroundStyle(Brand.mint)
+                .frame(minHeight: 44)
+                if showSafariHelp { safariHelp.transition(.opacity.combined(with: .move(edge: .top))) }
+            }
+            Spacer()
+            primaryButton("Entendido") { onDone() }
+            versionFooter.padding(.top, 14)
+        }
+        .padding(.horizontal, 28)
+        .padding(.vertical, 20)
+    }
+
+    private func newRow(icon: String, text: LocalizedStringKey) -> some View {
+        HStack(alignment: .top, spacing: 14) {
+            Image(systemName: icon).font(.title2).foregroundStyle(Brand.mint).frame(width: 32)
+            Text(text).font(.body).foregroundStyle(Brand.soft).fixedSize(horizontal: false, vertical: true)
+        }
+    }
+
+    private var safariHelp: some View {
+        VStack(alignment: .leading, spacing: 8) {
+            Text("1. Abre Ajustes › Apps › Safari › Extensiones (en iOS 17: Ajustes › Safari › Extensiones).")
+            Text("2. Toca T-Box y actívala.")
+            Text("3. En «Todos los sitios web», elige «Permitir».")
+        }
+        .font(.subheadline)
+        .foregroundStyle(Brand.soft)
+        .fixedSize(horizontal: false, vertical: true)
+        .padding(14)
+        .frame(maxWidth: .infinity, alignment: .leading)
+        .background(Brand.mint.opacity(0.07), in: RoundedRectangle(cornerRadius: 14))
+        .overlay(RoundedRectangle(cornerRadius: 14).stroke(Brand.mint.opacity(0.25)))
+    }
+
+    private var versionFooter: some View {
+        Text(verbatim: "v\(Self.appVersion)")
+            .font(.caption2.monospacedDigit())
+            .foregroundStyle(Brand.soft.opacity(0.6))
+            .frame(maxWidth: .infinity)
     }
 
     private func primaryButton(_ title: LocalizedStringKey, action: @escaping () -> Void) -> some View {

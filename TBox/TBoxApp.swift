@@ -48,6 +48,8 @@ struct RootView: View {
     @AppStorage("support.asked") private var supportAsked = false
     @AppStorage("share.asked") private var shareAsked = false
     @AppStorage("welcome.seen") private var welcomeSeen = ""
+    /// Se fija al abrir: si ya vio una bienvenida anterior, solo ve las novedades.
+    @State private var welcomeIsUpdate = !(UserDefaults.standard.string(forKey: "welcome.seen") ?? "").isEmpty
     /// Descargas completadas al abrir la app: las tarjetas solo aparecen después de terminar una descarga
     /// en esta sesión, nunca al abrir (ni encima de la bienvenida).
     @State private var completedAtLaunch = UserDefaults.standard.integer(forKey: "support.completed")
@@ -92,7 +94,7 @@ struct RootView: View {
         .overlay(alignment: .top) { ToastView().animation(.spring, value: Toaster.shared.current) }
         .fullScreenCover(isPresented: Binding(get: { welcomeSeen != WelcomeView.edition },
                                               set: { if !$0 { welcomeSeen = WelcomeView.edition } })) {
-            WelcomeView { welcomeSeen = WelcomeView.edition }
+            WelcomeView(whatsNew: welcomeIsUpdate) { welcomeSeen = WelcomeView.edition }
         }
         .tint(.green)
         .onChange(of: scenePhase) { _, phase in
