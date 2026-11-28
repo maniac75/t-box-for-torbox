@@ -86,6 +86,7 @@ targets:
       - path: TBox/Config.swift
       - path: TBox/Diagnostics.swift
       - path: TBox/UpdateChecker.swift
+      - path: TBox/CleanTitle.swift
     settings:
       base:
         PRODUCT_BUNDLE_IDENTIFIER: io.github.maniac75.tbox.tests

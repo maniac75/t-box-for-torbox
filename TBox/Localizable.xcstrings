@@ -1131,6 +1131,16 @@
         }
       }
     },
+    "Descargar solo con wifi": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Download on Wi-Fi only"
+          }
+        }
+      }
+    },
     "Descargar todo (.zip)": {
       "localizations": {
         "en": {
@@ -1467,6 +1477,16 @@
           "stringUnit": {
             "state": "translated",
             "value": "On iPhone"
+          }
+        }
+      }
+    },
+    "En pausa": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Paused"
           }
         }
       }
@@ -1981,12 +2001,12 @@
         }
       }
     },
-    "Lo que bajes queda en la carpeta T-Box de la app Archivos, aunque la app esté cerrada. Para llevar un archivo a iCloud u otra carpeta: En el iPhone › desliza › Compartir › Guardar en Archivos.\n\nLa descarga rápida pide los archivos de más de 32 MB en 4 a 6 partes a la vez y las une al final. Si algo falla, desactívala.": {
+    "Lo que bajes queda en la carpeta T-Box de la app Archivos, aunque la app esté cerrada. Para llevar un archivo a iCloud u otra carpeta: En el iPhone › desliza › Compartir › Guardar en Archivos.\n\nLa descarga rápida pide los archivos de más de 32 MB en 4 a 6 partes a la vez y las une al final. Si algo falla, desactívala.\n\nCon \"solo con wifi\", las descargas nuevas esperan hasta que haya wifi. Puedes pausar y reanudar cada descarga desde el panel de actividad o desde En el iPhone.": {
       "localizations": {
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "What you download stays in the T-Box folder of the Files app, even with the app closed. To move a file to iCloud or another folder: On iPhone › swipe › Share › Save to Files.\n\nFast download requests files over 32 MB in 4 to 6 parts at once and joins them at the end. If something goes wrong, turn it off."
+            "value": "What you download stays in the T-Box folder of the Files app, even with the app closed. To move a file to iCloud or another folder: On iPhone › swipe › Share › Save to Files.\n\nFast download requests files over 32 MB in 4 to 6 parts at once and joins them at the end. If something goes wrong, turn it off.\n\nWith \"Wi-Fi only\", new downloads wait until there's Wi-Fi. You can pause and resume each download from the activity panel or from On iPhone."
           }
         }
       }
@@ -2381,6 +2401,26 @@
         }
       }
     },
+    "Pausar": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Pause"
+          }
+        }
+      }
+    },
+    "Pausar todas": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Pause all"
+          }
+        }
+      }
+    },
     "Pega magnets o enlaces": {
       "localizations": {
         "en": {
@@ -2537,6 +2577,26 @@
           "stringUnit": {
             "state": "translated",
             "value": "Remove from favorites"
+          }
+        }
+      }
+    },
+    "Reanudar": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Resume"
+          }
+        }
+      }
+    },
+    "Reanudar todas": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Resume all"
           }
         }
       }
@@ -2767,6 +2827,16 @@
           "stringUnit": {
             "state": "translated",
             "value": "Supported sites"
+          }
+        }
+      }
+    },
+    "Solo con wifi: sin wifi, las descargas esperan hasta que vuelva.": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Wi-Fi only: without Wi-Fi, downloads wait until it's back."
           }
         }
       }
@@ -3191,6 +3261,16 @@
         }
       }
     },
+    "Títulos limpios en la biblioteca": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Clean titles in the library"
+          }
+        }
+      }
+    },
     "Uno por línea, mezclados si quieres. Los magnets van a Torrents y los enlaces a Web.": {
       "localizations": {
         "en": {
@@ -3307,6 +3387,16 @@
           "stringUnit": {
             "state": "translated",
             "value": "Web"
+          }
+        }
+      }
+    },
+    "en pausa": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "paused"
           }
         }
       }

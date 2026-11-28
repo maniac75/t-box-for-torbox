@@ -10,6 +10,9 @@ Format: [Keep a Changelog](https://keepachangelog.com/en/1.1.0/). Versions befor
 - About screen in Account, with sharing and GitHub links.
 - A one-time card asking to share T-Box or star it on GitHub.
 - Update in Feather with one tap from the update notice in Account.
+- Pause and resume downloads to iPhone.
+- Download on Wi-Fi only (in Account).
+- Clean titles in the library: "The Office S03E04" instead of the full release name. Can be turned off.
 
 ## [0.4.0] - 2026-11-23
 

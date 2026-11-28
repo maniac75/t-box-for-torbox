@@ -15,7 +15,10 @@ struct DownloadsView: View {
                 if !downloads.items.isEmpty {
                     Section {
                         ForEach(downloads.items) { item in
-                            DownloadStatusRow(item: item)
+                            HStack(spacing: 12) {
+                                DownloadStatusRow(item: item)
+                                if item.isActive { PauseButton(item: item) }
+                            }
                                 .contentShape(Rectangle())
                                 .onTapGesture { if downloads.canRetry(item) { downloads.retry(item) } }
                                 .swipeActions(edge: .leading) {
@@ -27,7 +30,7 @@ struct DownloadsView: View {
                                     }
                                 }
                                 .swipeActions {
-                                    if item.status == .running {
+                                    if item.isActive {
                                         Button(role: .destructive) { downloads.cancel(item) } label: {
                                             Label("Cancelar", systemImage: "stop.circle")
                                         }

@@ -2,6 +2,7 @@ import SwiftUI
 import QuickLook
 
 struct TorrentDetailView: View {
+    @AppStorage("library.cleanTitles") private var cleanTitles = true
     let ref: ItemRef
 
     @EnvironmentObject private var state: AppState
@@ -63,7 +64,13 @@ struct TorrentDetailView: View {
     private func content(_ t: Torrent) -> some View {
         List {
             Section {
-                Text(t.name).font(.headline).textSelection(.enabled)
+                VStack(alignment: .leading, spacing: 4) {
+                    let clean = CleanTitle.cached(t.name)
+                    Text(cleanTitles ? clean : t.name).font(.headline).textSelection(.enabled)
+                    if cleanTitles && clean != t.name {
+                        Text(t.name).font(.caption).foregroundStyle(.secondary).textSelection(.enabled)
+                    }
+                }
                 HStack { StateBadge(torrent: t); Spacer(); Text(Fmt.bytes(t.size)).foregroundStyle(.secondary) }
                 if !t.isReady && t.failureText == nil {
                     ProgressView(value: min(max(t.progress, 0), 1))

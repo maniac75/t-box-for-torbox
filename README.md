@@ -163,8 +163,9 @@ Yes. The referral code and links are in [`TBox/Config.swift`](TBox/Config.swift)
 
 - [x] Unified library with queue, sorting, filters and multi-select (0.4.0)
 - [x] Faster multi-part downloads, Live Activities, speed and time left (0.4.0)
-- [ ] Usenet and clean titles in the library
-- [ ] "iphone" tag with auto-download and download controls (Wi-Fi only, limit, pause)
+- [x] Clean titles, pause/resume and Wi-Fi-only downloads (0.4.1)
+- [ ] Usenet
+- [ ] "iphone" tag with auto-download and a speed limit
 - [ ] Home Screen widget and Siri shortcuts
 - [ ] Watch: catalog with AIOStreams/Torrentio sources, MKV player (including watching while it downloads) and TorBox streaming (Pro)
 - [ ] TorBox status, account stats and RSS (Pro)

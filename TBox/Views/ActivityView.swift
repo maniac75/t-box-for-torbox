@@ -6,7 +6,8 @@ struct ActivityBar: View {
     @EnvironmentObject private var downloads: DownloadManager
     @State private var showSheet = false
 
-    private var running: [DownloadManager.Item] { downloads.items.filter { $0.status == .running } }
+    private var running: [DownloadManager.Item] { downloads.items.filter { $0.isActive } }
+    private var allPaused: Bool { !running.isEmpty && running.allSatisfy { $0.status == .paused } }
 
     private var phoneProgress: Double? {
         let r = running.filter { $0.expected > 0 }
@@ -21,7 +22,11 @@ struct ActivityBar: View {
         if torbox > 0 || !running.isEmpty {
             Button { showSheet = true } label: {
                 HStack(spacing: 10) {
-                    ProgressView().controlSize(.small)
+                    if allPaused {
+                        Image(systemName: "pause.circle.fill").foregroundStyle(.secondary)
+                    } else {
+                        ProgressView().controlSize(.small)
+                    }
                     VStack(alignment: .leading, spacing: 1) {
                         Text(summary(torbox: torbox)).font(.footnote.weight(.semibold)).lineLimit(1)
                         if let p = phoneProgress {
@@ -49,6 +54,7 @@ struct ActivityBar: View {
         if !running.isEmpty {
             var s = String(format: L("%d al iPhone"), running.count)
             if let p = phoneProgress { s += " \(Int(p * 100))%" }
+            if allPaused { s += " · " + L("en pausa") }
             parts.append(s)
         }
         return parts.joined(separator: " · ")
@@ -104,15 +110,18 @@ struct ActivitySheet: View {
                         Text("Desliza a la izquierda para eliminar de TorBox lo que no avanza.")
                     }
                 }
-                let running = downloads.items.filter { $0.status == .running }
+                let running = downloads.items.filter { $0.isActive }
                 if !running.isEmpty {
                     Section {
                         ForEach(running) { item in
-                            VStack(alignment: .leading, spacing: 4) {
-                                Text(item.name).font(.subheadline).lineLimit(2)
-                                ProgressView(value: item.progress).tint(.green)
-                                Text(item.detailText)
-                                    .font(.caption).foregroundStyle(.secondary).monospacedDigit()
+                            HStack(spacing: 12) {
+                                VStack(alignment: .leading, spacing: 4) {
+                                    Text(item.name).font(.subheadline).lineLimit(2)
+                                    ProgressView(value: item.progress).tint(item.status == .paused ? .gray : .green)
+                                    Text(item.detailText)
+                                        .font(.caption).foregroundStyle(.secondary).monospacedDigit()
+                                }
+                                PauseButton(item: item)
                             }
                             .swipeActions {
                                 Button(role: .destructive) { downloads.cancel(item) } label: {
@@ -124,11 +133,20 @@ struct ActivitySheet: View {
                         HStack {
                             Text("Bajando al iPhone")
                             Spacer()
+                            if downloads.canPauseAll {
+                                Button("Pausar todas") { downloads.pauseAll() }.font(.caption)
+                            } else {
+                                Button("Reanudar todas") { downloads.resumeAll() }.font(.caption)
+                            }
                             Button("Cancelar todas") { confirmCancelAll = true }.font(.caption)
+                        }
+                    } footer: {
+                        if AppSettings.wifiOnly {
+                            Text("Solo con wifi: sin wifi, las descargas esperan hasta que vuelva.")
                         }
                     }
                 }
-                let done = downloads.items.filter { $0.status != .running }
+                let done = downloads.items.filter { !$0.isActive }
                 if !done.isEmpty {
                     Section {
                         ForEach(done) { item in
@@ -179,8 +197,8 @@ struct DownloadStatusRow: View {
         VStack(alignment: .leading, spacing: 4) {
             Text(item.name).font(.subheadline).lineLimit(2)
             switch item.status {
-            case .running:
-                ProgressView(value: item.progress)
+            case .running, .paused:
+                ProgressView(value: item.progress).tint(item.status == .paused ? .gray : .green)
                 Text(item.detailText)
                     .font(.caption).foregroundStyle(.secondary).monospacedDigit()
             case .done:
@@ -194,6 +212,26 @@ struct DownloadStatusRow: View {
                 Label(msg, systemImage: "xmark.octagon.fill").font(.caption).foregroundStyle(.red)
             }
         }
+    }
+}
+
+/// Botón redondo de pausa / reanudar para una descarga al iPhone.
+struct PauseButton: View {
+    let item: DownloadManager.Item
+    @EnvironmentObject private var downloads: DownloadManager
+
+    var body: some View {
+        let paused = item.status == .paused
+        Button {
+            if paused { downloads.resume(item) } else { downloads.pause(item) }
+        } label: {
+            Image(systemName: paused ? "play.circle.fill" : "pause.circle.fill")
+                .font(.title2)
+                .foregroundStyle(paused ? Color.green : Color.secondary)
+                .frame(width: 44, height: 44)
+        }
+        .buttonStyle(.borderless)
+        .accessibilityLabel(paused ? L("Reanudar") : L("Pausar"))
     }
 }
 

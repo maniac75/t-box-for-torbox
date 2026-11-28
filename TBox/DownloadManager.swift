@@ -9,7 +9,14 @@ final class DownloadManager: NSObject, ObservableObject, URLSessionDownloadDeleg
     static let shared = DownloadManager()
 
     enum Status: Equatable {
-        case running, done, savedToPhotos, failed(String)
+        case running, paused, done, savedToPhotos, failed(String)
+    }
+
+    /// Una solicitud que respeta el ajuste "solo con wifi".
+    static func request(_ url: URL) -> URLRequest {
+        var r = URLRequest(url: url)
+        r.allowsCellularAccess = !AppSettings.wifiOnly
+        return r
     }
 
     /// Prefijo en taskDescription: sobrevive si la app se cierra durante la descarga.
@@ -37,6 +44,9 @@ final class DownloadManager: NSObject, ObservableObject, URLSessionDownloadDeleg
         var sampleBytes: Int64 = 0
         var sampleAt: Date?
 
+        /// En curso o en pausa: todavía no termina.
+        var isActive: Bool { status == .running || status == .paused }
+
         /// Segundos que faltan según la velocidad actual.
         var secondsLeft: Int? {
             guard speed > 0, expected > received else { return nil }
@@ -45,8 +55,9 @@ final class DownloadManager: NSObject, ObservableObject, URLSessionDownloadDeleg
 
         /// "419,8 MB de 725,7 MB · 1,2 MB/s · 4 min"
         var detailText: String {
-            guard expected > 0 else { return L("Iniciando…") }
+            guard expected > 0 else { return status == .paused ? L("En pausa") : L("Iniciando…") }
             var s = String(format: L("%@ de %@"), Fmt.bytes(received), Fmt.bytes(expected))
+            if status == .paused { return s + " · " + L("En pausa") }
             if speed > 0 { s += " · " + Fmt.speed(Int64(speed)) }
             if let eta = Fmt.eta(secondsLeft) { s += " · " + eta }
             return s
@@ -75,6 +86,7 @@ final class DownloadManager: NSObject, ObservableObject, URLSessionDownloadDeleg
         let c = URLSessionConfiguration.default
         c.allowsCellularAccess = true
         c.timeoutIntervalForResource = 60 * 60 * 24
+        c.waitsForConnectivity = true   // con "solo con wifi" espera la red en vez de fallar
         return URLSession(configuration: c, delegate: self, delegateQueue: nil)
     }()
 
@@ -113,7 +125,8 @@ final class DownloadManager: NSObject, ObservableObject, URLSessionDownloadDeleg
                       TurboStore.parse(dt.taskDescription) == nil else { return nil }
                 let info = Self.parse(dt.taskDescription)
                 return Item(id: dt.taskIdentifier, name: info.name, progress: 0,
-                            received: 0, expected: 0, status: .running, toPhotos: info.toPhotos, task: dt,
+                            received: dt.countOfBytesReceived, expected: dt.countOfBytesExpectedToReceive,
+                            status: t.state == .suspended ? .paused : .running, toPhotos: info.toPhotos, task: dt,
                             url: dt.originalRequest?.url)
             }
             let live = Set(tasks.filter { $0.state == .running || $0.state == .suspended }
@@ -155,7 +168,7 @@ final class DownloadManager: NSObject, ObservableObject, URLSessionDownloadDeleg
     /// Una sola conexión (archivos chicos, o servidores que no aceptan tramos).
     func startSingle(url: URL, filename: String, saveToPhotos: Bool) {
         let s = Self.useForeground ? foregroundSession : session
-        let task = s.downloadTask(with: url)
+        let task = s.downloadTask(with: Self.request(url))
         task.taskDescription = (saveToPhotos ? Self.photosPrefix : "") + filename
         let item = Item(id: itemID(s, task), name: filename, progress: 0, received: 0, expected: 0,
                         status: .running, toPhotos: saveToPhotos, task: task, url: url)
@@ -176,6 +189,34 @@ final class DownloadManager: NSObject, ObservableObject, URLSessionDownloadDeleg
         return false
     }
 
+    // MARK: Pausa
+
+    /// Pausa sin perder lo bajado: la tarea queda suspendida (no usa red ni vence mientras tanto).
+    /// En una descarga en varias partes se suspenden todos sus tramos.
+    func pause(_ item: Item) {
+        guard item.status == .running else { return }
+        if let job = turboJobs.values.first(where: { $0.itemID == item.id }) {
+            setTurboPaused(job.jobID, true)
+        } else {
+            item.task?.suspend()
+        }
+        update(item.id) { $0.status = .paused; $0.speed = 0; $0.sampleAt = nil }
+    }
+
+    func resume(_ item: Item) {
+        guard item.status == .paused else { return }
+        if let job = turboJobs.values.first(where: { $0.itemID == item.id }) {
+            setTurboPaused(job.jobID, false)
+        } else {
+            item.task?.resume()
+        }
+        update(item.id) { $0.status = .running }
+    }
+
+    var canPauseAll: Bool { items.contains { $0.status == .running } }
+    func pauseAll() { items.filter { $0.status == .running }.forEach(pause) }
+    func resumeAll() { items.filter { $0.status == .paused }.forEach(resume) }
+
     func cancel(_ item: Item) {
         item.task?.cancel()
         if let job = turboJobs.values.first(where: { $0.itemID == item.id }) { dropTurbo(job.jobID) }
@@ -192,12 +233,12 @@ final class DownloadManager: NSObject, ObservableObject, URLSessionDownloadDeleg
             for id in self.turboJobs.keys { TurboStore.remove(id) }
             self.turboJobs.removeAll()
             TurboStore.save(self.turboJobs)
-            self.items.removeAll { $0.status == .running }
+            self.items.removeAll { $0.isActive }
         }
     }
 
     func clearFinished() {
-        items.removeAll { $0.status != .running }
+        items.removeAll { !$0.isActive }
     }
 
     func reloadLocalFiles() {
@@ -435,7 +476,7 @@ final class DownloadManager: NSObject, ObservableObject, URLSessionDownloadDeleg
            let url = task.originalRequest?.url {
             Self.useForeground = true
             Diagnostics.log("DOWNLOAD retrying as normal download")
-            let retry = foregroundSession.downloadTask(with: url)
+            let retry = foregroundSession.downloadTask(with: Self.request(url))
             retry.taskDescription = task.taskDescription
             let newID = itemID(foregroundSession, retry)
             DispatchQueue.main.async {

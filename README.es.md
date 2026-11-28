@@ -158,8 +158,9 @@ Sí. El código de referido y los enlaces están en [`TBox/Config.swift`](TBox/C
 
 - [x] Biblioteca unificada con cola, orden, filtros y selección múltiple (0.4.0)
 - [x] Descarga rápida en varias partes, Live Activities, velocidad y tiempo restante (0.4.0)
-- [ ] Usenet y títulos limpios en la biblioteca
-- [ ] Etiqueta "iphone" con descarga automática y control de descargas (Wi-Fi, límite, pausa)
+- [x] Títulos limpios, pausar/reanudar y descargas solo con wifi (0.4.1)
+- [ ] Usenet
+- [ ] Etiqueta "iphone" con descarga automática y límite de velocidad
 - [ ] Widget en la pantalla de inicio y atajos de Siri
 - [ ] Ver: catálogo con fuentes de AIOStreams/Torrentio, reproductor MKV (también para ver mientras baja) y streaming de TorBox (Pro)
 - [ ] Estado de TorBox, estadísticas de la cuenta y RSS (Pro)

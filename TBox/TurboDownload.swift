@@ -18,11 +18,13 @@ struct TurboJob: Codable {
     var done: [Bool]
     var retries: [Int]
     let foreground: Bool
+    /// En pausa por el usuario (opcional para leer trabajos guardados por versiones anteriores).
+    var paused: Bool? = nil
     /// Bytes recibidos en vivo por tramo (no se guarda).
     var received: [Int64] = []
 
     enum CodingKeys: String, CodingKey {
-        case jobID, itemID, original, url, name, toPhotos, total, starts, ends, done, retries, foreground
+        case jobID, itemID, original, url, name, toPhotos, total, starts, ends, done, retries, foreground, paused
     }
 
     var partCount: Int { starts.count }
@@ -103,7 +105,7 @@ enum TurboStore {
     /// Pide el primer byte para saber el tamaño y si el servidor acepta tramos.
     /// Devuelve la URL final (tras redirecciones) y el tamaño total.
     static func probe(_ url: URL) async -> (URL, Int64)? {
-        var req = URLRequest(url: url)
+        var req = DownloadManager.request(url)
         req.setValue("bytes=0-0", forHTTPHeaderField: "Range")
         req.timeoutInterval = 20
         guard let (_, resp) = try? await URLSession.shared.data(for: req),
@@ -151,7 +153,7 @@ extension DownloadManager {
     private func turboSession(_ job: TurboJob) -> URLSession { job.foreground ? foregroundSession : session }
 
     private func launchPart(_ job: TurboJob, _ i: Int) {
-        var req = URLRequest(url: job.url)
+        var req = DownloadManager.request(job.url)
         req.setValue("bytes=\(job.starts[i])-\(job.ends[i])", forHTTPHeaderField: "Range")
         let task = turboSession(job).downloadTask(with: req)
         task.taskDescription = TurboStore.describe(job.jobID, i)
@@ -231,7 +233,8 @@ extension DownloadManager {
                 TurboStore.save(self.turboJobs)
                 let delay = Double(job.retries[index]) * 2
                 DispatchQueue.main.asyncAfter(deadline: .now() + delay) {
-                    if let j = self.turboJobs[jobID] { self.launchPart(j, index) }
+                    // En pausa, el tramo se lanza al reanudar.
+                    if let j = self.turboJobs[jobID], j.paused != true { self.launchPart(j, index) }
                 }
             } else {
                 self.dropTurbo(jobID)
@@ -246,6 +249,30 @@ extension DownloadManager {
         dropTurbo(jobID)
         items.removeAll { $0.id == job.itemID }
         startSingle(url: job.original, filename: job.name, saveToPhotos: job.toPhotos)
+    }
+
+    /// Suspende o reanuda todos los tramos de un trabajo. Al reanudar, relanza los que no tienen tarea viva.
+    func setTurboPaused(_ jobID: String, _ paused: Bool) {
+        guard var job = turboJobs[jobID] else { return }
+        job.paused = paused
+        turboJobs[jobID] = job
+        TurboStore.save(turboJobs)
+        turboSession(job).getAllTasks { tasks in
+            let mine = tasks.filter { TurboStore.parse($0.taskDescription)?.jobID == jobID }
+            if paused {
+                mine.forEach { $0.suspend() }
+                return
+            }
+            var live = Set<Int>()
+            for t in mine where t.state == .running || t.state == .suspended {
+                if let i = TurboStore.parse(t.taskDescription)?.index { live.insert(i) }
+                t.resume()
+            }
+            DispatchQueue.main.async {
+                guard let j = self.turboJobs[jobID] else { return }
+                for i in 0..<j.partCount where !j.done[i] && !live.contains(i) { self.launchPart(j, i) }
+            }
+        }
     }
 
     /// Cancela las tareas de un trabajo y borra sus tramos.
@@ -293,14 +320,15 @@ extension DownloadManager {
             job.itemID = row
             turboJobs[id] = job
             var item = Item(id: row, name: job.name, progress: 0, received: 0, expected: job.total,
-                            status: .running, toPhotos: job.toPhotos, task: nil, url: job.original)
+                            status: job.paused == true ? .paused : .running, toPhotos: job.toPhotos,
+                            task: nil, url: job.original)
             Self.applyProgress(&item, received: job.receivedTotal, expected: job.total)
             items.insert(item, at: 0)
             if job.done.allSatisfy({ $0 }) {
                 mergeTurbo(job)
                 continue
             }
-            for i in 0..<job.partCount where !job.done[i] && !live.contains("\(id)::\(i)") {
+            for i in 0..<job.partCount where job.paused != true && !job.done[i] && !live.contains("\(id)::\(i)") {
                 launchPart(job, i)
             }
         }

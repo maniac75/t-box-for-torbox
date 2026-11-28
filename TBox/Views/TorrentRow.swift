@@ -4,6 +4,7 @@ struct TorrentRow: View {
     let torrent: Torrent
     var favorite = false
     var showKind = false
+    @AppStorage("library.cleanTitles") private var cleanTitles = true
 
     var body: some View {
         VStack(alignment: .leading, spacing: 6) {
@@ -13,7 +14,7 @@ struct TorrentRow: View {
                     Image(systemName: "star.fill").font(.caption).foregroundStyle(.yellow)
                         .accessibilityLabel(L("Favorito"))
                 }
-                Text(torrent.name)
+                Text(cleanTitles ? CleanTitle.cached(torrent.name) : torrent.name)
                     .font(.subheadline.weight(.semibold))
                     .lineLimit(2)
             }

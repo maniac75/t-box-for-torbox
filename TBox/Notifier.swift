@@ -80,6 +80,18 @@ enum AppSettings {
         set { d.set(newValue, forKey: "downloads.multipart") }
     }
 
+    /// Mostrar en la biblioteca títulos limpios en vez del nombre técnico del release (activado por omisión).
+    static var cleanTitles: Bool {
+        get { d.object(forKey: "library.cleanTitles") as? Bool ?? true }
+        set { d.set(newValue, forKey: "library.cleanTitles") }
+    }
+
+    /// Descargar al iPhone solo con wifi (se aplica a las descargas nuevas y a las que se reanudan).
+    static var wifiOnly: Bool {
+        get { d.bool(forKey: "downloads.wifiOnly") }
+        set { d.set(newValue, forKey: "downloads.wifiOnly") }
+    }
+
     static var unzipAfterDownload: Bool {
         get { d.bool(forKey: "downloads.unzip") }
         set { d.set(newValue, forKey: "downloads.unzip") }
