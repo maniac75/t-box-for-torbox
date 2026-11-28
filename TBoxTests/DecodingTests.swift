@@ -148,6 +148,13 @@ final class DecodingTests: XCTestCase {
         XCTAssertFalse(TorBoxAPI.isCancellation(URLError(.timedOut)))
     }
 
+    func testLinkParserTorrentFileLink() {
+        let r = LinkParser.parse("https://example.org/dl/My%20Show.S01E01.torrent\nhttps://example.org/page")
+        XCTAssertEqual(r.links.map(\.kind), [.torrentURL, .web])
+        XCTAssertEqual(r.links[0].displayName, "My Show.S01E01.torrent")
+        XCTAssertTrue(r.links[0].isTorrent)
+    }
+
     func testLinkParserMixed() {
         let text = """
         magnet:?xt=urn:btih:dd8255ecdc7ca55fb0bbf81323d87062db1f6d1c&dn=Big+Buck+Bunny
