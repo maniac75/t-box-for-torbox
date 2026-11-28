@@ -127,11 +127,27 @@
   let seenSites = [];
   let fab = null;
 
+  // Detección general (sitios compatibles sin regla propia, incluidos los de adultos):
+  // la página tiene un video, se declara como video, o su dirección parece de un archivo.
+  const FILE_PATH = /^\/(video|videos|watch|view|v|file|files|d|embed|e|f|movie|movies|clip|clips)\/[^/?#]+/i;
+  function looksLikeFilePage() {
+    if (document.querySelector('video')) return true;
+    const og = document.querySelector('meta[property="og:type"]');
+    if (og && /^video/i.test(og.content || '')) return true;
+    if (document.querySelector('meta[property="og:video"], meta[property="og:video:url"], meta[name="twitter:player"]')) return true;
+    if (FILE_PATH.test(location.pathname) || /[?&]v(iewkey)?=/i.test(location.search)) return true;
+    const last = location.pathname.split('/').filter(Boolean).pop() || '';
+    const id = last.replace(/\.html?$/i, '');
+    return id.length >= 8 && /[a-z]/i.test(id) && /\d/.test(id) && !/-/.test(id);
+  }
+
   function pageLevel() {
     if (!hosterFor(location.hostname)) return 0;
     const rule = ruleFor(location.hostname);
     if (rule) return rule.p.test(rest(location)) ? 1 : 0;
-    return location.pathname.length > 1 && !SKIP.test(location.pathname) ? 3 : 0;
+    if (location.pathname.length <= 1 && !location.search) return 0;   // portada
+    if (SKIP.test(location.pathname)) return 0;
+    return looksLikeFilePage() ? 1 : 3;
   }
 
   function updateFab() {
