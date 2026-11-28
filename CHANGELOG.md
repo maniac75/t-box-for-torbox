@@ -2,7 +2,7 @@
 
 Format: [Keep a Changelog](https://keepachangelog.com/en/1.1.0/). Versions before 0.3.0 are pre-releases.
 
-## [Unreleased]
+## [0.5.1] - 2026-11-28
 
 ### Changed
 - The app checks for updates every hour, and again when you open Account, instead of every 12 hours.

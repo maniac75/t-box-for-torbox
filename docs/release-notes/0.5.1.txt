@@ -1,0 +1,2 @@
+• "Check for updates" button in Account
+• The app now checks for updates every hour instead of every 12 hours
