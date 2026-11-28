@@ -2,7 +2,7 @@ import Foundation
 import UIKit
 
 /// Revisa en GitHub si hay una versión más nueva de T-Box.
-/// Una consulta pública a api.github.com, sin cuenta ni datos personales; como máximo una vez cada 12 horas.
+/// Una consulta pública a api.github.com, sin cuenta ni datos personales; como máximo una vez por hora (cada 5 minutos al entrar a Cuenta).
 final class UpdateChecker: ObservableObject {
     static let shared = UpdateChecker()
 
@@ -31,9 +31,10 @@ final class UpdateChecker: ObservableObject {
         latestVersion = UserDefaults.standard.string(forKey: "update.latest")
     }
 
-    func check(force: Bool = false) async {
+    /// `minInterval`: segundos mínimos desde la última consulta.
+    func check(minInterval: TimeInterval = 3600) async {
         let last = UserDefaults.standard.double(forKey: "update.checkedAt")
-        if !force, Date().timeIntervalSince1970 - last < 12 * 3600 { return }
+        if Date().timeIntervalSince1970 - last < minInterval { return }
         var req = URLRequest(url: URL(string: "https://api.github.com/repos/maniac75/t-box-for-torbox/releases/latest")!)
         req.setValue("application/vnd.github+json", forHTTPHeaderField: "Accept")
         req.timeoutInterval = 15

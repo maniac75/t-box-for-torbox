@@ -218,6 +218,7 @@ struct SettingsView: View {
             }
             .navigationTitle("Cuenta")
             .task {
+                await updates.check(minInterval: 300)
                 if state.user == nil { await state.refresh() }
                 if state.referral == nil { await state.loadReferral() }
             }
