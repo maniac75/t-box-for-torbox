@@ -33,6 +33,15 @@
       ],
       "versions": [
         {
+          "version": "0.5.0",
+          "buildVersion": "42",
+          "date": "2026-11-28",
+          "localizedDescription": "• Safari extension: send links to T-Box from supported sites\n• Links to .torrent files now work\n• Short \"What's new\" screen after updating",
+          "downloadURL": "https://github.com/maniac75/t-box-for-torbox/releases/download/v0.5.0/T-Box-0.5.0.ipa",
+          "size": 1447874,
+          "minOSVersion": "17.0"
+        },
+        {
           "version": "0.4.1",
           "buildVersion": "39",
           "date": "2026-11-28",
@@ -93,11 +102,11 @@
           "NSPhotoLibraryAddUsageDescription": "To save images and videos you download from TorBox to Photos."
         }
       },
-      "version": "0.4.1",
+      "version": "0.5.0",
       "versionDate": "2026-11-28",
-      "versionDescription": "• Pause and resume downloads to iPhone\n• Download on Wi-Fi only\n• Clean titles in the library\n• Update in Feather with one tap\n• Animated welcome and loading screen\n• New About screen",
-      "downloadURL": "https://github.com/maniac75/t-box-for-torbox/releases/download/v0.4.1/T-Box-0.4.1.ipa",
-      "size": 1367607
+      "versionDescription": "• Safari extension: send links to T-Box from supported sites\n• Links to .torrent files now work\n• Short \"What's new\" screen after updating",
+      "downloadURL": "https://github.com/maniac75/t-box-for-torbox/releases/download/v0.5.0/T-Box-0.5.0.ipa",
+      "size": 1447874
     }
   ],
   "news": []
